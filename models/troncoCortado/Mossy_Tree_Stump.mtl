@@ -1,0 +1,15 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl TextureAtlas_1001.001
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.600000 0.600000 0.600000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Bump textures\\Mossy_Tree_Stump_Normal.png
+map_Kd textures\\Mossy_Tree_Stump_Color.jpg
+map_Ns textures\\Mossy_Tree_Stump_Roughness.jpg
