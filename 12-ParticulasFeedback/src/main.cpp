@@ -161,7 +161,7 @@ std::vector<float> lamp2Orientation = { 21.37 + 90, -65.0 + 90 };
 
 //Pastos position
 std::vector<glm::vec3> pastoMultiplePosition = { glm::vec3(-7.5, 0.0, -50.5), glm::vec3(37.0, 0.0, -30.0), glm::vec3(-3.5, 0.0, 20.5),
-										glm::vec3(-27.0, 0.0, 67.0), glm::vec3(-1.5, 0.0, 1.5)};
+										glm::vec3(-27.0, 0.0, 67.0), glm::vec3(-1.5, 0.0, 1.5) };
 //Pastos orientation
 std::vector<float> pastoMultipleOrientation = { 25.0, 45.0, 0.0, -90.0, -12.0 };
 
@@ -533,8 +533,8 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	else
 		std::cout << "Failed to load texture" << std::endl;
 	textureCesped.freeImage(bitmap);
-	
-	
+
+
 	// Definiendo la textura a utilizar
 	Texture textureTerrainBackground("../Textures/grassP.png");
 	// Carga el mapa de bits (FIBITMAP es el tipo de dato de la libreria)
@@ -1158,33 +1158,33 @@ void applicationLoop() {
 		/*******************************************
 		 * Propiedades SpotLights
 		 *******************************************/
-		/*glm::vec3 spotPosition = glm::vec3(modelMatrixHeli * glm::vec4(0.32437, 0.226053, 1.79149, 1.0));
-		shaderMulLighting.setInt("spotLightCount", 1);
-		shaderTerrain.setInt("spotLightCount", 1);
-		shaderMulLighting.setVectorFloat3("spotLights[0].light.ambient", glm::value_ptr(glm::vec3(0.0, 0.0, 0.0)));
-		shaderMulLighting.setVectorFloat3("spotLights[0].light.diffuse", glm::value_ptr(glm::vec3(0.2, 0.3, 0.2)));
-		shaderMulLighting.setVectorFloat3("spotLights[0].light.specular", glm::value_ptr(glm::vec3(0.3, 0.3, 0.3)));
-		shaderMulLighting.setVectorFloat3("spotLights[0].position", glm::value_ptr(spotPosition));
-		shaderMulLighting.setVectorFloat3("spotLights[0].direction", glm::value_ptr(glm::vec3(0, -1, 0)));
-		shaderMulLighting.setFloat("spotLights[0].constant", 1.0);
-		shaderMulLighting.setFloat("spotLights[0].linear", 0.074);
-		shaderMulLighting.setFloat("spotLights[0].quadratic", 0.03);
-		shaderMulLighting.setFloat("spotLights[0].cutOff", cos(glm::radians(12.5f)));
-		shaderMulLighting.setFloat("spotLights[0].outerCutOff", cos(glm::radians(15.0f)));
-		shaderTerrain.setVectorFloat3("spotLights[0].light.ambient", glm::value_ptr(glm::vec3(0.0, 0.0, 0.0)));
-		shaderTerrain.setVectorFloat3("spotLights[0].light.diffuse", glm::value_ptr(glm::vec3(0.2, 0.3, 0.2)));
-		shaderTerrain.setVectorFloat3("spotLights[0].light.specular", glm::value_ptr(glm::vec3(0.3, 0.3, 0.3)));
-		shaderTerrain.setVectorFloat3("spotLights[0].position", glm::value_ptr(spotPosition));
-		shaderTerrain.setVectorFloat3("spotLights[0].direction", glm::value_ptr(glm::vec3(0, -1, 0)));
-		shaderTerrain.setFloat("spotLights[0].constant", 1.0);
-		shaderTerrain.setFloat("spotLights[0].linear", 0.074);
-		shaderTerrain.setFloat("spotLights[0].quadratic", 0.03);
-		shaderTerrain.setFloat("spotLights[0].cutOff", cos(glm::radians(12.5f)));
-		shaderTerrain.setFloat("spotLights[0].outerCutOff", cos(glm::radians(15.0f)));*/
+		 /*glm::vec3 spotPosition = glm::vec3(modelMatrixHeli * glm::vec4(0.32437, 0.226053, 1.79149, 1.0));
+		 shaderMulLighting.setInt("spotLightCount", 1);
+		 shaderTerrain.setInt("spotLightCount", 1);
+		 shaderMulLighting.setVectorFloat3("spotLights[0].light.ambient", glm::value_ptr(glm::vec3(0.0, 0.0, 0.0)));
+		 shaderMulLighting.setVectorFloat3("spotLights[0].light.diffuse", glm::value_ptr(glm::vec3(0.2, 0.3, 0.2)));
+		 shaderMulLighting.setVectorFloat3("spotLights[0].light.specular", glm::value_ptr(glm::vec3(0.3, 0.3, 0.3)));
+		 shaderMulLighting.setVectorFloat3("spotLights[0].position", glm::value_ptr(spotPosition));
+		 shaderMulLighting.setVectorFloat3("spotLights[0].direction", glm::value_ptr(glm::vec3(0, -1, 0)));
+		 shaderMulLighting.setFloat("spotLights[0].constant", 1.0);
+		 shaderMulLighting.setFloat("spotLights[0].linear", 0.074);
+		 shaderMulLighting.setFloat("spotLights[0].quadratic", 0.03);
+		 shaderMulLighting.setFloat("spotLights[0].cutOff", cos(glm::radians(12.5f)));
+		 shaderMulLighting.setFloat("spotLights[0].outerCutOff", cos(glm::radians(15.0f)));
+		 shaderTerrain.setVectorFloat3("spotLights[0].light.ambient", glm::value_ptr(glm::vec3(0.0, 0.0, 0.0)));
+		 shaderTerrain.setVectorFloat3("spotLights[0].light.diffuse", glm::value_ptr(glm::vec3(0.2, 0.3, 0.2)));
+		 shaderTerrain.setVectorFloat3("spotLights[0].light.specular", glm::value_ptr(glm::vec3(0.3, 0.3, 0.3)));
+		 shaderTerrain.setVectorFloat3("spotLights[0].position", glm::value_ptr(spotPosition));
+		 shaderTerrain.setVectorFloat3("spotLights[0].direction", glm::value_ptr(glm::vec3(0, -1, 0)));
+		 shaderTerrain.setFloat("spotLights[0].constant", 1.0);
+		 shaderTerrain.setFloat("spotLights[0].linear", 0.074);
+		 shaderTerrain.setFloat("spotLights[0].quadratic", 0.03);
+		 shaderTerrain.setFloat("spotLights[0].cutOff", cos(glm::radians(12.5f)));
+		 shaderTerrain.setFloat("spotLights[0].outerCutOff", cos(glm::radians(15.0f)));*/
 
-		/*******************************************
-		 * Propiedades PointLights
-		 *******************************************/
+		 /*******************************************
+		  * Propiedades PointLights
+		  *******************************************/
 		shaderMulLighting.setInt("pointLightCount", lamp1Position.size() + lamp2Orientation.size());
 		shaderTerrain.setInt("pointLightCount", lamp1Position.size() + lamp2Orientation.size());
 		for (int i = 0; i < lamp1Position.size(); i++) {
@@ -1374,7 +1374,7 @@ void applicationLoop() {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDisable(GL_CULL_FACE);
 		for (std::map<float, std::pair<std::string, glm::vec3> >::reverse_iterator it = blendingSorted.rbegin(); it != blendingSorted.rend(); it++) {
-		
+
 			if (it->second.first.compare("fountain") == 0) {
 				/**********
 				 * Init Render particles systems
@@ -1464,7 +1464,7 @@ void applicationLoop() {
 		 * IMPORTANT do this before interpolations
 		 *******************************************/
 
-		//Collider del la rock
+		 //Collider del la rock
 		AbstractModel::SBB rockCollider;
 		glm::mat4 modelMatrixColliderRock = glm::mat4(matrixModelRoca);
 		modelMatrixColliderRock = glm::scale(modelMatrixColliderRock, glm::vec3(1.0, 1.0, 1.0));
