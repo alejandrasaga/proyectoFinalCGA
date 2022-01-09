@@ -177,6 +177,19 @@ std::vector<glm::vec3> arbFronPosition = { glm::vec3(-87.19, 1.3, -89.4), glm::v
 //Arbol frondoso orientation
 std::vector<float> arbFronOrientation = { -15.0, 45.0, 36.0, -45.0, -25.0, 70.0, -12.0, -53.0, -37.0, -5.0, 28.0, 67.0 };
 
+//Dulces
+//Basic Candy
+std::vector<glm::vec3> basCandyPosition= {glm::vec3(-24.21, 0.0, 24.21),glm::vec3(-14.25, 0.0, 7.22), glm::vec3(-24.02, 0.0, -17.38), glm::vec3(-9.57, 0.0, -31.44)};
+std::vector<float> basCandyOrientation = { 30.0, 45.0, 60.0, 75.0 };
+
+//Color bomb
+std::vector<glm::vec3> colBombPosition = { glm::vec3(30.66, 0.0, -44.72), glm::vec3(59.37, 0.0, -48.43), glm::vec3(22.07, 0.0, 34.76), glm::vec3(41.8, 0.0, 37.9)};
+std::vector<float> colBombOrientation = { 30.0, 45.0, 60.0, 75.0 };
+
+//Lolipop
+std::vector<glm::vec3> lolipopPosition = { glm::vec3(67.18, 0.0, 15.23), glm::vec3(76.95, 0.0, 47.65), glm::vec3(-12.5, 0.0, 5.86), glm::vec3(-27.93, 0.0, 61.13) };
+std::vector<float> lolipopOrientation = { 30.0, 45.0, 60.0, 75.0 };
+
 // Blending model unsorted
 std::map<std::string, glm::vec3> blendingUnsorted = {
 		{"fountain", glm::vec3(5.0, 0.0, -40.0)},
@@ -457,6 +470,15 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 
 	modelRoca2.loadModel("../models/roca2/roca2.obj");
 	modelRoca2.setShader(&shaderMulLighting);
+
+	modelBasicCandy.loadModel("../models/BasicCandy/BasicCandy.obj");
+	modelBasicCandy.setShader(&shaderMulLighting);
+
+	modelColorBomb.loadModel("../models/ColorBomb/ColorBomb.obj");
+	modelColorBomb.setShader(&shaderMulLighting);
+
+	modelLolipop.loadModel("../models/LolipopHammer/LolipopHammer.obj");
+	modelLolipop.setShader(&shaderMulLighting);
 
 	terrain.init();
 	terrain.setShader(&shaderTerrain);
@@ -814,6 +836,9 @@ void destroy() {
 	// Custom objects Delete
 	modelRoca.destroy();
 	modelRoca2.destroy();
+	modelBasicCandy.destroy();
+	modelColorBomb.destroy();
+	modelLolipop.destroy();
 	modelAutumnTree.destroy();
 	modelArbolFrondoso.destroy();
 	modelLamp1.destroy();
@@ -1232,6 +1257,16 @@ void applicationLoop() {
 			modelArbolFrondoso.setScale(glm::vec3(1.2, 1.2, 1.2));
 			modelArbolFrondoso.setOrientation(glm::vec3(0, arbFronOrientation[i], 0));
 			modelArbolFrondoso.render();
+		}
+
+		//Render de los dulces
+		//Basic Candy
+		for (int i = 0; i < basCandyPosition.size(); i++) {
+			basCandyPosition[i].y = terrain.getHeightTerrain(basCandyPosition[i].x, basCandyPosition[i].z);
+			modelBasicCandy.setPosition(basCandyPosition[i]);
+			modelBasicCandy.setScale(glm::vec3(0.25, 0.25, 0.25));
+			modelBasicCandy.setOrientation(glm::vec3(0, basCandyOrientation[i], 0));
+			modelBasicCandy.render();
 		}
 
 
