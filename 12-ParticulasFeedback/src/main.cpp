@@ -179,7 +179,7 @@ std::vector<float> arbFronOrientation = { -15.0, 45.0, 36.0, -45.0, -25.0, 70.0,
 
 //Dulces
 //Basic Candy
-std::vector<glm::vec3> basCandyPosition= {glm::vec3(-24.21, 0.0, 24.21),glm::vec3(-14.25, 0.0, 7.22), glm::vec3(-24.02, 0.0, -17.38), glm::vec3(-9.57, 0.0, -31.44)};
+std::vector<glm::vec3> basCandyPosition= {glm::vec3(-24.21, 5.5, 24.21),glm::vec3(-14.25, 5.5, 7.22), glm::vec3(-24.02, 5.5, -17.38), glm::vec3(-9.57, 5.5, -31.44)};
 std::vector<float> basCandyOrientation = { 30.0, 45.0, 60.0, 75.0 };
 
 //Color bomb
@@ -1127,7 +1127,7 @@ void applicationLoop() {
 		/*******************************************
 		 * Propiedades SpotLights
 		 *******************************************/
-		 /*glm::vec3 spotPosition = glm::vec3(modelMatrixHeli * glm::vec4(0.32437, 0.226053, 1.79149, 1.0));
+		 glm::vec3 spotPosition = glm::vec3(0.32437, 0.226053, 1.79149);
 		 shaderMulLighting.setInt("spotLightCount", 1);
 		 shaderTerrain.setInt("spotLightCount", 1);
 		 shaderMulLighting.setVectorFloat3("spotLights[0].light.ambient", glm::value_ptr(glm::vec3(0.0, 0.0, 0.0)));
@@ -1149,7 +1149,7 @@ void applicationLoop() {
 		 shaderTerrain.setFloat("spotLights[0].linear", 0.074);
 		 shaderTerrain.setFloat("spotLights[0].quadratic", 0.03);
 		 shaderTerrain.setFloat("spotLights[0].cutOff", cos(glm::radians(12.5f)));
-		 shaderTerrain.setFloat("spotLights[0].outerCutOff", cos(glm::radians(15.0f)));*/
+		 shaderTerrain.setFloat("spotLights[0].outerCutOff", cos(glm::radians(15.0f)));
 
 		 /*******************************************
 		  * Propiedades PointLights
@@ -1263,9 +1263,9 @@ void applicationLoop() {
 		//Basic Candy
 		for (int i = 0; i < basCandyPosition.size(); i++) {
 			basCandyPosition[i].y = terrain.getHeightTerrain(basCandyPosition[i].x, basCandyPosition[i].z);
-			modelBasicCandy.setPosition(basCandyPosition[i]);
-			modelBasicCandy.setScale(glm::vec3(0.25, 0.25, 0.25));
-			modelBasicCandy.setOrientation(glm::vec3(0, basCandyOrientation[i], 0));
+			modelBasicCandy.setPosition(glm::vec3(basCandyPosition[i].x, 1.2, basCandyPosition[i].z));
+			modelBasicCandy.setScale(glm::vec3(0.0015, 0.0015, 0.0015));
+			modelBasicCandy.setOrientation(glm::vec3(basCandyOrientation[i], 0, 0));
 			modelBasicCandy.render();
 		}
 
@@ -1482,6 +1482,19 @@ void applicationLoop() {
 			rock2Collider.ratio = modelRoca2.getSbb().ratio * 0.6;
 			addOrUpdateColliders(collidersSBB, "rock2 no. -" + std::to_string(i), rock2Collider, modelMatrixColliderRock2);
 		}
+		//Colliders de los dulces
+		//Basic Candy
+		for (int i = 0; i < basCandyPosition.size(); i++) {
+			AbstractModel::SBB basCandyCollider;
+			glm::mat4 modelMatrixColliderBasCandy = glm::mat4(1.0);
+			modelMatrixColliderBasCandy = glm::translate(modelMatrixColliderBasCandy, glm::vec3(basCandyPosition[i].x, 1.2, basCandyPosition[i].z));
+			modelMatrixColliderBasCandy = glm::rotate(modelMatrixColliderBasCandy, glm::radians(basCandyOrientation[i]),
+				glm::vec3(0, 1, 0));
+			basCandyCollider.c = glm::vec3(modelMatrixColliderBasCandy[3]);
+			basCandyCollider.ratio = modelBasicCandy.getSbb().ratio * 0.002;
+			addOrUpdateColliders(collidersSBB, "Basic Candy no. - " + std::to_string(i), basCandyCollider, modelMatrixColliderBasCandy);
+		}
+
 
 		// Lamps1 colliders
 		for (int i = 0; i < lamp1Position.size(); i++) {
