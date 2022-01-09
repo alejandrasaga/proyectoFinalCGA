@@ -1012,7 +1012,7 @@ void applicationLoop() {
 
 	matrixModelRoca = glm::translate(matrixModelRoca, glm::vec3(-3.0, 0.0, 2.0));
 
-	modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(13.0f, 0.05f, -5.0f));
+	modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(11.32f, 0.05f, 51.96f));
 	modelMatrixBoy = glm::rotate(modelMatrixBoy, glm::radians(-90.0f), glm::vec3(0, 1, 0));
 
 	modelMatrixFountain = glm::translate(modelMatrixFountain, glm::vec3(5.0, 0.0, -40.0));
@@ -1269,6 +1269,15 @@ void applicationLoop() {
 			modelBasicCandy.render();
 		}
 
+		//Color bomb
+		for (int i = 0; i < colBombPosition.size(); i++) {
+			colBombPosition[i].y = terrain.getHeightTerrain(colBombPosition[i].x, colBombPosition[i].z);
+			modelColorBomb.setPosition(glm::vec3(colBombPosition[i].x, 0.9, colBombPosition[i].z));
+			modelColorBomb.setScale(glm::vec3(0.065, 0.065, 0.065));
+			modelColorBomb.setOrientation(glm::vec3(colBombOrientation[i], 0, 0));
+			modelColorBomb.render();
+		}
+
 
 		// Render the lamps
 		for (int i = 0; i < lamp1Position.size(); i++) {
@@ -1493,6 +1502,18 @@ void applicationLoop() {
 			basCandyCollider.c = glm::vec3(modelMatrixColliderBasCandy[3]);
 			basCandyCollider.ratio = modelBasicCandy.getSbb().ratio * 0.002;
 			addOrUpdateColliders(collidersSBB, "Basic Candy no. - " + std::to_string(i), basCandyCollider, modelMatrixColliderBasCandy);
+		}
+
+		//Color bomb
+		for (int i = 0; i < basCandyPosition.size(); i++) {
+			AbstractModel::SBB colBombCollider;
+			glm::mat4 modelMatrixColliderColBomb = glm::mat4(1.0);
+			modelMatrixColliderColBomb = glm::translate(modelMatrixColliderColBomb, glm::vec3(colBombPosition[i].x, 1.2, colBombPosition[i].z));
+			modelMatrixColliderColBomb = glm::rotate(modelMatrixColliderColBomb, glm::radians(colBombOrientation[i]),
+				glm::vec3(0, 1, 0));
+			colBombCollider.c = glm::vec3(modelMatrixColliderColBomb[3]);
+			colBombCollider.ratio = modelColorBomb.getSbb().ratio * 0.06;
+			addOrUpdateColliders(collidersSBB, "Col bomb no. - " + std::to_string(i), colBombCollider, modelMatrixColliderColBomb);
 		}
 
 
