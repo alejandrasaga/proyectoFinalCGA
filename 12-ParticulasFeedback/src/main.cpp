@@ -80,6 +80,9 @@ Model modelRoca2;
 //Model arbol autumn
 Model modelAutumnTree;
 
+//Model arbol frondoso 
+Model modelArbolFrondoso;
+
 // Lamps
 Model modelLamp1;
 Model modelLamp2;
@@ -177,6 +180,12 @@ std::vector<glm::vec3> autumnPosition = {glm::vec3(-92.19, 0.0, -94.4), glm::vec
 						glm::vec3(87.0, 0.0, 62.9), glm::vec3(37.5, 0.0, 59.37), glm::vec3(-12.2, 0.0, 51.07)};
 //Autumn tree orientation
 std::vector<float> autumnOrientation = { -12.0, 45.0, 30.0, -45.0, -25.0, 90.0, -12.0, -57.0, -35.0, -5.0, 25.0, 93.0 };
+
+//Arbol frondoso position
+std::vector<glm::vec3> arbFronPosition = { glm::vec3(-87.19, 0.4, -89.4), glm::vec3(-3.12, 0.4, -89.1), glm::vec3(65.01, 0.4, 88.9), glm::vec3(-80.0, 0.4, -68.9),
+						 glm::vec3(87.19, 0.4, 89.4), glm::vec3(3.12, 0.4, 89.1), glm::vec3(-65.01, 0.4, -88.9), glm::vec3(80.0, 0.4, 68.9) };
+//Arbol frondoso orientation
+std::vector<float> arbFronOrientation = { -15.0, 45.0, 36.0, -45.0, -25.0, 70.0, -12.0, -53.0, -37.0, -5.0, 28.0, 67.0 };
 
 // Blending model unsorted
 std::map<std::string, glm::vec3> blendingUnsorted = {
@@ -475,6 +484,9 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelAutumnTree.loadModel("../models/Autumn Tree/Autumn Tree.obj");
 	modelAutumnTree.setShader(&shaderMulLighting);
 
+	//Model modelArbolFrondoso
+	modelArbolFrondoso.loadModel("../models/arbolFrondoso/arbolFrondoso.obj");
+	modelArbolFrondoso.setShader(&shaderMulLighting);
 
 	//Grass
 	modelMultipleGrass.loadModel("../models/Pastos/multipleGrass.obj");
@@ -484,7 +496,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelFountain.loadModel("../models/Fountain/fountain.obj");
 	modelFountain.setShader(&shaderMulLighting);
 
-	//Mayow
+	//Boy
 	boyModelAnimate.loadModel("../models/boy/boyAnimation.fbx");
 	boyModelAnimate.setShader(&shaderMulLighting);
 
@@ -813,6 +825,7 @@ void destroy() {
 	modelRoca.destroy();
 	modelRoca2.destroy();
 	modelAutumnTree.destroy();
+	modelArbolFrondoso.destroy();
 	modelLamp1.destroy();
 	modelLamp2.destroy();
 	modelLampPost2.destroy();
@@ -1290,6 +1303,15 @@ void applicationLoop() {
 			modelAutumnTree.render();
 		}
 
+		//Render arbol frondoso 
+		for (int i = 0; i < arbFronPosition.size(); i++) {
+			arbFronPosition[i].y = terrain.getHeightTerrain(arbFronPosition[i].x, arbFronPosition[i].z);
+			modelArbolFrondoso.setPosition(arbFronPosition[i]);
+			modelArbolFrondoso.setScale(glm::vec3(1.2, 1.2, 1.2));
+			modelArbolFrondoso.setOrientation(glm::vec3(0, arbFronOrientation[i], 0));
+			modelArbolFrondoso.render();
+		}
+
 
 		// Render the lamps
 		for (int i = 0; i < lamp1Position.size(); i++) {
@@ -1536,6 +1558,23 @@ void applicationLoop() {
 			autumnCollider.c = glm::vec3(modelMatrixColliderAutumn[3]);
 			autumnCollider.e = modelAutumnTree.getObb().e * glm::vec3(0.015, 0.15, 0.015);
 			std::get<0>(collidersOBB.find("Autumn tree no. " + std::to_string(i))->second) = autumnCollider;
+		}
+
+		//Arbol frondoso colliders
+		for (int i = 0; i < arbFronPosition.size(); i++) {
+			AbstractModel::OBB arbFronCollider;
+			glm::mat4 modelMatrixColliderFrondoso = glm::mat4(1.0);
+			modelMatrixColliderFrondoso = glm::translate(modelMatrixColliderFrondoso, arbFronPosition[i]);
+			modelMatrixColliderFrondoso = glm::rotate(modelMatrixColliderFrondoso, glm::radians(autumnOrientation[i]),
+				glm::vec3(0, 1, 0));
+			addOrUpdateColliders(collidersOBB, "Arbol frondoso no. - " + std::to_string(i), arbFronCollider, modelMatrixColliderFrondoso);
+			// Set the orientation of collider before doing the scale
+			arbFronCollider.u = glm::quat_cast(modelMatrixColliderFrondoso);
+			modelMatrixColliderFrondoso = glm::scale(modelMatrixColliderFrondoso, glm::vec3(0.2, 1.2, 0.2));
+			modelMatrixColliderFrondoso = glm::translate(modelMatrixColliderFrondoso, modelArbolFrondoso.getObb().c);
+			arbFronCollider.c = glm::vec3(modelMatrixColliderFrondoso[3]);
+			arbFronCollider.e = modelArbolFrondoso.getObb().e * glm::vec3(0.2, 1.2, 0.2);
+			std::get<0>(collidersOBB.find("Arbol frondoso no. - " + std::to_string(i))->second) = arbFronCollider;
 		}
 
 		// Lamps2 colliders
