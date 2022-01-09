@@ -1,0 +1,6 @@
+Mapa de alturas: 200 unidades en OpenGL 
+Mapa de alturas se traslada a la mitad: 100, 100 en el plano xz
+Resolución del mapa de mezcla es de 1024 x 1024
+Coordenadas de GIMP son 594, 240
+Coordenadas OpenGL: 594 * 200 / 1024 - 100 = 16.01
+		    240 * 200 / 1024 - 100 = -53.12
