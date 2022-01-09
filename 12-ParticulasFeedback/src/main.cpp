@@ -168,8 +168,16 @@ std::vector<float> pastoMultipleOrientation = { 25.0, 45.0, 0.0, -90.0, -12.0 };
 //Roca 2 position
 std::vector<glm::vec3> roca2Position = { glm::vec3(-49.21,0.0, -84.37), glm::vec3(54.5, 0.0, -67.38), glm::vec3(48.82, 0.0, -9.76),
 										glm::vec3(55.66, 0.0, 82.03), glm::vec3(65.23, 0.0, -25.59) };
-//Pastos orientation
+//Roca 2 orientation
 std::vector<float> roca2Orientation = { 3.0, 15.0, -87.0, 127.0, -120.0 };
+
+//Autumn tree position
+std::vector<glm::vec3> autumnPosition = {glm::vec3(-92.19, 0.0, -94.4), glm::vec3(3.12, 0.0, -95.1), glm::vec3(75.01, 0.0, 94.9), glm::vec3(-87.0, 0.0, -62.9), 
+						glm::vec3(-37.5, 0.0, -59.37), glm::vec3(12.2, 0.0, -51.07), glm::vec3(92.19, 0.0, 94.4), glm::vec3(-3.12, 0.0, 95.1), glm::vec3(-75.01, 0.0, -94.9),
+						glm::vec3(87.0, 0.0, 62.9), glm::vec3(37.5, 0.0, 59.37), glm::vec3(-12.2, 0.0, 51.07)};
+//Autumn tree orientation
+std::vector<float> autumnOrientation = { -12.0, 45.0, 30.0, -45.0, -25.0, 90.0, -12.0, -57.0, -35.0, -5.0, 25.0, 93.0 };
+
 // Blending model unsorted
 std::map<std::string, glm::vec3> blendingUnsorted = {
 		{"fountain", glm::vec3(5.0, 0.0, -40.0)},
@@ -804,6 +812,7 @@ void destroy() {
 	// Custom objects Delete
 	modelRoca.destroy();
 	modelRoca2.destroy();
+	modelAutumnTree.destroy();
 	modelLamp1.destroy();
 	modelLamp2.destroy();
 	modelLampPost2.destroy();
@@ -1272,6 +1281,16 @@ void applicationLoop() {
 		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
 		glActiveTexture(GL_TEXTURE0);
 
+		//Render arbol autumnn modelAutumnTree
+		for (int i = 0; i < autumnPosition.size(); i++) {
+			autumnPosition[i].y = terrain.getHeightTerrain(autumnPosition[i].x, autumnPosition[i].z);
+			modelAutumnTree.setPosition(autumnPosition[i]);
+			modelAutumnTree.setScale(glm::vec3(0.15, 0.15, 0.15));
+			modelAutumnTree.setOrientation(glm::vec3(0, autumnOrientation[i], 0));
+			modelAutumnTree.render();
+		}
+
+
 		// Render the lamps
 		for (int i = 0; i < lamp1Position.size(); i++) {
 			lamp1Position[i].y = terrain.getHeightTerrain(lamp1Position[i].x, lamp1Position[i].z);
@@ -1500,6 +1519,23 @@ void applicationLoop() {
 			lampCollider.c = glm::vec3(modelMatrixColliderLamp[3]);
 			lampCollider.e = modelLamp1.getObb().e * glm::vec3(0.5, 0.5, 0.5);
 			std::get<0>(collidersOBB.find("lamp1-" + std::to_string(i))->second) = lampCollider;
+		}
+
+		// Autumn tree colliders
+		for (int i = 0; i < autumnPosition.size(); i++) {
+			AbstractModel::OBB autumnCollider;
+			glm::mat4 modelMatrixColliderAutumn = glm::mat4(1.0);
+			modelMatrixColliderAutumn = glm::translate(modelMatrixColliderAutumn, autumnPosition[i]);
+			modelMatrixColliderAutumn = glm::rotate(modelMatrixColliderAutumn, glm::radians(autumnOrientation[i]),
+				glm::vec3(0, 1, 0));
+			addOrUpdateColliders(collidersOBB, "Autumn tree no. " + std::to_string(i), autumnCollider, modelMatrixColliderAutumn);
+			// Set the orientation of collider before doing the scale
+			autumnCollider.u = glm::quat_cast(modelMatrixColliderAutumn);
+			modelMatrixColliderAutumn = glm::scale(modelMatrixColliderAutumn, glm::vec3(0.015, 0.15, 0.015));
+			modelMatrixColliderAutumn = glm::translate(modelMatrixColliderAutumn, modelAutumnTree.getObb().c);
+			autumnCollider.c = glm::vec3(modelMatrixColliderAutumn[3]);
+			autumnCollider.e = modelAutumnTree.getObb().e * glm::vec3(0.015, 0.15, 0.015);
+			std::get<0>(collidersOBB.find("Autumn tree no. " + std::to_string(i))->second) = autumnCollider;
 		}
 
 		// Lamps2 colliders
