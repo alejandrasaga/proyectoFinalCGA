@@ -1279,8 +1279,8 @@ void applicationLoop() {
 		//Render arbol frondoso 
 		for (int i = 0; i < arbFronPosition.size(); i++) {
 			arbFronPosition[i].y = terrain.getHeightTerrain(arbFronPosition[i].x, arbFronPosition[i].z);
-			modelArbolFrondoso.setPosition(arbFronPosition[i]);
-			modelArbolFrondoso.setScale(glm::vec3(1.2, 1.2, 1.2));
+			modelArbolFrondoso.setPosition(glm::vec3(arbFronPosition[i].x, 0.3, arbFronPosition[i].z));
+			modelArbolFrondoso.setScale(glm::vec3(2.5, 2.5, 2.5));
 			modelArbolFrondoso.setOrientation(glm::vec3(0, arbFronOrientation[i], 0));
 			modelArbolFrondoso.render();
 		}
@@ -1665,30 +1665,35 @@ void applicationLoop() {
 		for (int i = 0; i < arbFronPosition.size(); i++) {
 			AbstractModel::OBB arbFronCollider;
 			glm::mat4 modelMatrixColliderFrondoso = glm::mat4(1.0);
-			modelMatrixColliderFrondoso = glm::translate(modelMatrixColliderFrondoso, arbFronPosition[i]);
+			modelMatrixColliderFrondoso = glm::translate(modelMatrixColliderFrondoso, glm::vec3(arbFronPosition[i].x, 0.3, arbFronPosition[i].z));
 			modelMatrixColliderFrondoso = glm::rotate(modelMatrixColliderFrondoso, glm::radians(autumnOrientation[i]),
 				glm::vec3(0, 1, 0));
 			addOrUpdateColliders(collidersOBB, "Arbol frondoso no. - " + std::to_string(i), arbFronCollider, modelMatrixColliderFrondoso);
 			// Set the orientation of collider before doing the scale
 			arbFronCollider.u = glm::quat_cast(modelMatrixColliderFrondoso);
-			modelMatrixColliderFrondoso = glm::scale(modelMatrixColliderFrondoso, glm::vec3(0.2, 1.2, 0.2));
+			modelMatrixColliderFrondoso = glm::scale(modelMatrixColliderFrondoso, glm::vec3(0.5, 2.5, 0.5));
 			modelMatrixColliderFrondoso = glm::translate(modelMatrixColliderFrondoso, modelArbolFrondoso.getObb().c);
 			arbFronCollider.c = glm::vec3(modelMatrixColliderFrondoso[3]);
-			arbFronCollider.e = modelArbolFrondoso.getObb().e * glm::vec3(0.2, 1.2, 0.2);
+			arbFronCollider.e = modelArbolFrondoso.getObb().e * glm::vec3(0.5, 2.5, 0.5);
 			std::get<0>(collidersOBB.find("Arbol frondoso no. - " + std::to_string(i))->second) = arbFronCollider;
 		}
 
 
 		// Collider de Boy
 		AbstractModel::OBB boyCollider;
-		glm::mat4 modelMatrixColliderBoy = glm::mat4(modelMatrixBoy);
-		modelMatrixColliderBoy = glm::rotate(modelMatrixColliderBoy, glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
-		boyCollider.u = glm::quat_cast(modelMatrixColliderBoy);
-		modelMatrixColliderBoy = glm::scale(modelMatrixColliderBoy, glm::vec3(0.5, 0.5, 0.5));
-		modelMatrixColliderBoy = glm::translate(modelMatrixColliderBoy, boyModelAnimate.getObb().c);
+		glm::mat4 modelmatrixColliderBoy = glm::mat4(modelMatrixBoy);
+		modelmatrixColliderBoy = glm::rotate(modelmatrixColliderBoy,
+			glm::radians(-90.0f), glm::vec3(1, 0, 0));
+		// Set the orientation of collider before doing the scale
+		boyCollider.u = glm::quat_cast(modelmatrixColliderBoy);
+		modelmatrixColliderBoy = glm::scale(modelmatrixColliderBoy, glm::vec3(0.4, 0.5, 0.5));
+		modelmatrixColliderBoy = glm::translate(modelmatrixColliderBoy,
+			glm::vec3(boyModelAnimate.getObb().c.x,
+				boyModelAnimate.getObb().c.y,
+				boyModelAnimate.getObb().c.z));
 		boyCollider.e = boyModelAnimate.getObb().e * glm::vec3(0.4, 0.5, 0.5);
-		boyCollider.c = modelMatrixColliderBoy[3];
-		addOrUpdateColliders(collidersOBB, "boy", boyCollider, modelMatrixBoy);
+		boyCollider.c = glm::vec3(modelmatrixColliderBoy[3]);
+		addOrUpdateColliders(collidersOBB, "Boy", boyCollider, modelMatrixBoy);
 
 		/*******************************************
 		 * Render de colliders
