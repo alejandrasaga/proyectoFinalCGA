@@ -88,6 +88,9 @@ Model modelBasicCandy;
 Model modelColorBomb;
 Model modelLolipop;
 
+//Carrot para bajar velocidad solo hay 5 en todo el mapa
+Model modelCarrot;
+
 
 // Lamps
 Model modelLamp1;
@@ -189,6 +192,11 @@ std::vector<float> colBombOrientation = { 30.0, 45.0, 60.0, 75.0 };
 //Lolipop
 std::vector<glm::vec3> lolipopPosition = { glm::vec3(67.18, 0.0, 15.23), glm::vec3(76.95, 0.0, 47.65), glm::vec3(-12.5, 0.0, 5.86), glm::vec3(-27.93, 0.0, 61.13) };
 std::vector<float> lolipopOrientation = { 180, 180, -180, -180};
+
+//Carrot carrotPosition
+std::vector<glm::vec3> carrotPosition = { glm::vec3(-13.28, 0.0, 31.83), glm::vec3(9.37, 0.0, 42.96), glm::vec3(-13.28, 0.0, 72.46), glm::vec3(-11.91, 0.0, -35.35),
+										glm::vec3(68.75, 0.0, 22.65)};
+std::vector<float> carrotOrientation = { 180, -180, 180, -180 };
 
 // Blending model unsorted
 std::map<std::string, glm::vec3> blendingUnsorted = {
@@ -479,6 +487,9 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 
 	modelLolipop.loadModel("../models/LolipopHammer/LolipopHammer.obj");
 	modelLolipop.setShader(&shaderMulLighting);
+
+	modelCarrot.loadModel("../models/Carrot/Carrot.obj");
+	modelCarrot.setShader(&shaderMulLighting);
 
 	terrain.init();
 	terrain.setShader(&shaderTerrain);
@@ -839,6 +850,7 @@ void destroy() {
 	modelBasicCandy.destroy();
 	modelColorBomb.destroy();
 	modelLolipop.destroy();
+	modelCarrot.destroy();
 	modelAutumnTree.destroy();
 	modelArbolFrondoso.destroy();
 	modelLamp1.destroy();
@@ -1285,6 +1297,15 @@ void applicationLoop() {
 			modelLolipop.setScale(glm::vec3(0.03, 0.03, 0.03));
 			modelLolipop.setOrientation(glm::vec3(0, lolipopOrientation[i], 0));
 			modelLolipop.render();
+		}
+		
+		//Carrot render
+		for (int i = 0; i < carrotPosition.size(); i++) {
+			lolipopPosition[i].y = terrain.getHeightTerrain(carrotPosition[i].x, carrotPosition[i].z);
+			modelCarrot.setPosition(glm::vec3(carrotPosition[i].x, 0.5, carrotPosition[i].z));
+			modelCarrot.setScale(glm::vec3(1.25, 1.5, 1.25));
+			modelCarrot.setOrientation(glm::vec3(0, carrotOrientation[i], 0));
+			modelCarrot.render();
 		}
 
 
