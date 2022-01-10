@@ -1571,15 +1571,15 @@ void applicationLoop() {
 		addOrUpdateColliders(collidersSBB, "rock", rockCollider, matrixModelRoca);
 
 		//Collider de la fuente
-		glm::mat4 modelMatrixColliderFuente = glm::mat4(modelMatrixFountain);
-		modelMatrixColliderFuente[3][1] = terrain.getHeightTerrain(modelMatrixColliderFuente[3][0], modelMatrixColliderFuente[3][2]);
-		AbstractModel::OBB FountainCollider;
-		FountainCollider.u = glm::quat_cast(modelMatrixColliderFuente);
-		modelMatrixColliderFuente = glm::scale(modelMatrixColliderFuente, glm::vec3(10.0f, 10.0f, 10.0f));
-		modelMatrixColliderFuente = glm::translate(modelMatrixColliderFuente, modelFountain.getObb().c);
-		FountainCollider.c = modelMatrixColliderFuente[3];
-		FountainCollider.e = modelFountain.getObb().e * glm::vec3(10.0f, 10.0f, 10.0f);
-		addOrUpdateColliders(collidersOBB, "Fountain", FountainCollider, modelMatrixFountain);
+		AbstractModel::OBB fountainCollider;
+		glm::mat4 modelMatrixColliderFountain = glm::mat4(modelMatrixFountain);
+		//modelMatrixColliderFountain = glm::rotate(modelMatrixColliderFountain, glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
+		fountainCollider.u = glm::quat_cast(modelMatrixColliderFountain);
+		modelMatrixColliderFountain = glm::scale(modelMatrixColliderFountain, glm::vec3(4.9, 15.5, 4.9));
+		modelMatrixColliderFountain = glm::translate(modelMatrixFountain, modelFountain.getObb().c);
+		fountainCollider.e = modelFountain.getObb().e * glm::vec3(4.9, 15.5, 4.9);
+		fountainCollider.c = modelMatrixColliderFountain[3];
+		addOrUpdateColliders(collidersOBB, "fountain", fountainCollider, modelMatrixFountain);
 
 
 		//Colliders de la roca 2
