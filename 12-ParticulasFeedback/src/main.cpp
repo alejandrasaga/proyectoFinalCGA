@@ -1535,10 +1535,10 @@ void applicationLoop() {
 			addOrUpdateColliders(collidersOBB, "Lolipop no. -" + std::to_string(i), lolipopCollider, modelMatrixColliderLolipop);
 			// Set the orientation of collider before doing the scale
 			lolipopCollider.u = glm::quat_cast(modelMatrixColliderLolipop);
-			modelMatrixColliderLolipop = glm::scale(modelMatrixColliderLolipop, glm::vec3(0.03, 0.03, 0.5));
+			modelMatrixColliderLolipop = glm::scale(modelMatrixColliderLolipop, glm::vec3(0.03, 0.03, 0.015));
 			modelMatrixColliderLolipop = glm::translate(modelMatrixColliderLolipop, modelLolipop.getObb().c);
 			lolipopCollider.c = glm::vec3(modelMatrixColliderLolipop[3]);
-			lolipopCollider.e = modelLolipop.getObb().e * glm::vec3(0.03, 0.03, 0.5);
+			lolipopCollider.e = modelLolipop.getObb().e * glm::vec3(0.03, 0.03, 0.015);
 			std::get<0>(collidersOBB.find("Lolipop no. -" + std::to_string(i))->second) = lolipopCollider;
 		}
 
