@@ -1605,7 +1605,7 @@ void applicationLoop() {
 			AbstractModel::SBB colBombCollider;
 			glm::mat4 modelMatrixColliderColBomb = glm::mat4(1.0);
 			if (candyCollider == true && i == numElemento) {
-				modelMatrixColliderColBomb = glm::translate(modelMatrixColliderColBomb, glm::vec3(colBombPosition[i].x, 7.0, colBombPosition[i].z));
+				modelMatrixColliderColBomb = glm::translate(modelMatrixColliderColBomb, glm::vec3(colBombPosition[i].x, -7.0, colBombPosition[i].z));
 			}
 			else {
 				modelMatrixColliderColBomb = glm::translate(modelMatrixColliderColBomb, glm::vec3(colBombPosition[i].x, 1.0, colBombPosition[i].z));
@@ -1665,7 +1665,7 @@ void applicationLoop() {
 			AbstractModel::SBB calaveritaCollider;
 			glm::mat4 modelMatrixColliderCalaverita = glm::mat4(1.0);
 			if (calaveritaAzucarCollider == true && i == numElemento) {
-				modelMatrixColliderCalaverita = glm::translate(modelMatrixColliderCalaverita, glm::vec3(calavPosition[i].x, 5.5, calavPosition[i].z));
+				modelMatrixColliderCalaverita = glm::translate(modelMatrixColliderCalaverita, glm::vec3(calavPosition[i].x, -5.5, calavPosition[i].z));
 			}
 			else {
 				modelMatrixColliderCalaverita = glm::translate(modelMatrixColliderCalaverita, glm::vec3(calavPosition[i].x, 0.5, calavPosition[i].z));
