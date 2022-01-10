@@ -544,7 +544,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelAutumnTree.setShader(&shaderMulLighting);
 
 	//Model modelArbolFrondoso
-	modelArbolFrondoso.loadModel("../models/arbolFrondoso/arbolFrondoso.obj");
+	modelArbolFrondoso.loadModel("../models/pino/pino.obj");
 	modelArbolFrondoso.setShader(&shaderMulLighting);
 
 	//Grass
@@ -1384,7 +1384,7 @@ void applicationLoop() {
 			isJump = false;
 			modelMatrixBoy[3][1] = terrain.getHeightTerrain(modelMatrixBoy[3][0], modelMatrixBoy[3][2]);
 		}
-		//modelMatrixMayow[3][1] = terrain.getHeightTerrain(modelMatrixMayow[3][0], modelMatrixMayow[3][2]);
+		
 		glm::mat4 modelMatrixBodyBody = glm::mat4(modelMatrixBoy);
 		modelMatrixBodyBody = glm::scale(modelMatrixBodyBody, glm::vec3(0.005, 0.005, 0.005));
 		boyModelAnimate.setAnimationIndex(animationIndex);
@@ -1679,21 +1679,16 @@ void applicationLoop() {
 		}
 
 
-		// Collider de mayow
-		AbstractModel::OBB mayowCollider;
-		glm::mat4 modelmatrixColliderMayow = glm::mat4(modelMatrixBoy);
-		modelmatrixColliderMayow = glm::rotate(modelmatrixColliderMayow,
-			glm::radians(-90.0f), glm::vec3(1, 0, 0));
-		// Set the orientation of collider before doing the scale
-		mayowCollider.u = glm::quat_cast(modelmatrixColliderMayow);
-		modelmatrixColliderMayow = glm::scale(modelmatrixColliderMayow, glm::vec3(0.021, 0.021, 0.021));
-		modelmatrixColliderMayow = glm::translate(modelmatrixColliderMayow,
-			glm::vec3(boyModelAnimate.getObb().c.x,
-				boyModelAnimate.getObb().c.y,
-				boyModelAnimate.getObb().c.z));
-		mayowCollider.e = boyModelAnimate.getObb().e * glm::vec3(0.05, 0.05, 0.05) * glm::vec3(0.787401574, 0.787401574, 0.787401574);
-		mayowCollider.c = glm::vec3(modelmatrixColliderMayow[3]);
-		addOrUpdateColliders(collidersOBB, "mayow", mayowCollider, modelMatrixBoy);
+		// Collider de Boy
+		AbstractModel::OBB boyCollider;
+		glm::mat4 modelMatrixColliderBoy = glm::mat4(modelMatrixBoy);
+		modelMatrixColliderBoy = glm::rotate(modelMatrixColliderBoy, glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
+		boyCollider.u = glm::quat_cast(modelMatrixColliderBoy);
+		modelMatrixColliderBoy = glm::scale(modelMatrixColliderBoy, glm::vec3(0.5, 0.5, 0.5));
+		modelMatrixColliderBoy = glm::translate(modelMatrixColliderBoy, boyModelAnimate.getObb().c);
+		boyCollider.e = boyModelAnimate.getObb().e * glm::vec3(0.4, 0.5, 0.5);
+		boyCollider.c = modelMatrixColliderBoy[3];
+		addOrUpdateColliders(collidersOBB, "boy", boyCollider, modelMatrixBoy);
 
 		/*******************************************
 		 * Render de colliders
@@ -1720,18 +1715,18 @@ void applicationLoop() {
 		}
 
 		// Esto es para ilustrar la transformacion inversa de los coliders
-		/*glm::vec3 cinv = glm::inverse(mayowCollider.u) * glm::vec4(rockCollider.c, 1.0);
+		/*glm::vec3 cinv = glm::inverse(BoyCollider.u) * glm::vec4(rockCollider.c, 1.0);
 		glm::mat4 invColliderS = glm::mat4(1.0);
 		invColliderS = glm::translate(invColliderS, cinv);
-		invColliderS =  invColliderS * glm::mat4(mayowCollider.u);
+		invColliderS =  invColliderS * glm::mat4(BoyCollider.u);
 		invColliderS = glm::scale(invColliderS, glm::vec3(rockCollider.ratio * 2.0, rockCollider.ratio * 2.0, rockCollider.ratio * 2.0));
 		sphereCollider.setColor(glm::vec4(1.0, 1.0, 0.0, 1.0));
 		sphereCollider.enableWireMode();
 		sphereCollider.render(invColliderS);
-		glm::vec3 cinv2 = glm::inverse(mayowCollider.u) * glm::vec4(mayowCollider.c, 1.0);
+		glm::vec3 cinv2 = glm::inverse(BoyCollider.u) * glm::vec4(BoyCollider.c, 1.0);
 		glm::mat4 invColliderB = glm::mat4(1.0);
 		invColliderB = glm::translate(invColliderB, cinv2);
-		invColliderB = glm::scale(invColliderB, mayowCollider.e * 2.0f);
+		invColliderB = glm::scale(invColliderB, BoyCollider.e * 2.0f);
 		boxCollider.setColor(glm::vec4(1.0, 1.0, 0.0, 1.0));
 		boxCollider.enableWireMode();
 		boxCollider.render(invColliderB);
@@ -1814,7 +1809,7 @@ void applicationLoop() {
 				if (!colIt->second)
 					addOrUpdateColliders(collidersOBB, jt->first);
 				else {
-					if (jt->first.compare("mayow") == 0)
+					if (jt->first.compare("Boy") == 0)
 						modelMatrixBoy = std::get<1>(jt->second);
 					//if (jt->first.compare("camaraAnim") == 0)
 						//cambiar
