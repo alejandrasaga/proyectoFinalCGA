@@ -165,10 +165,12 @@ std::string fileName = "";
 bool record = false;
 
 // Lamps positions
-std::vector<glm::vec3> lampMedPosition = { glm::vec3(-7.03, 0, -19.14), glm::vec3(
-		24.41, 0, -34.57), glm::vec3(-10.15, 0, -54.10) };
+std::vector<glm::vec3> lampMedPosition = { glm::vec3(-4.88, 0.0, 20.11), glm::vec3(-15.43, 0.0, -5.07), glm::vec3(-26.75, 0.0, 12.7), glm::vec3(-25.58, 0.0, -32.61),
+			glm::vec3(-6.64, 0.0, -61.13), glm::vec3(10.35, 0.0, -26.56), glm::vec3(41.4, 0.0, -53.51), glm::vec3(10.74, 0.0, 31.83), glm::vec3(16.24, 0.0, 56.31),
+			glm::vec3(38.86, 0.0, 28.51), glm::vec3(60.15, 0.0, 33.2), glm::vec3(75.97, 0.0, -0.97), glm::vec3(-5.07, 0.0, 75.97), glm::vec3(-22.46, 0.0, 88.28), 
+			glm::vec3(-39.64, 0.0, 54.88), glm::vec3(-64.84, 0.0, -39.64)};
 
-std::vector<float> lampMedOrientation = { -17.0, -82.67, 23.70 };
+std::vector<float> lampMedOrientation = {-20, 20, -20, 20, -20, 20, -20, 20, -20, 20, -20, 20, -20, 20, -20, 20};
 
 //Pastos position
 std::vector<glm::vec3> pastoMultiplePosition = { glm::vec3(-7.5, 0.0, -50.5), glm::vec3(37.0, 0.0, -30.0), glm::vec3(-3.5, 0.0, 20.5),
