@@ -91,6 +91,8 @@ Model modelLolipop;
 //Radish para bajar velocidad solo hay 5 en todo el mapa
 Model modelRadish;
 
+//Calaverita
+Model modelCalaverita;
 
 // Lamps
 Model modelLamp1;
@@ -196,7 +198,12 @@ std::vector<float> lolipopOrientation = { 180, 180, -180, -180};
 //Radish RadishPosition
 std::vector<glm::vec3> RadishPosition = { glm::vec3(-13.28, 0.0, 31.83), glm::vec3(9.37, 0.0, 42.96), glm::vec3(-13.28, 0.0, 72.46), glm::vec3(-11.91, 0.0, -35.35),
 										glm::vec3(68.75, 0.0, 22.65)};
-std::vector<float> RadishOrientation = { 180, -180, 180, -180 };
+std::vector<float> RadishOrientation = { 180, -180, 180, -180, -180 };
+
+//Calaverita de Azucar 5
+std::vector<glm::vec3> calavPosition = { glm::vec3(-65.82, -0.5, -60.15), glm::vec3(57.03, -0.5, -67.18), glm::vec3(11.32, -0.5, 13.28), glm::vec3(-61.32, -0.5, -20.11),
+										glm::vec3(-60.54, -0.5, 46.48)};
+std::vector<float> calavOrientation = { 45.0, -45.0, 30.0, -30.0, 60.0};
 
 // Blending model unsorted
 std::map<std::string, glm::vec3> blendingUnsorted = {
@@ -490,6 +497,9 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 
 	modelRadish.loadModel("../models/radish/radish.obj");
 	modelRadish.setShader(&shaderMulLighting);
+
+	modelCalaverita.loadModel("../models/calaveritaAzucar/calaveritaAzucar.obj");
+	modelCalaverita.setShader(&shaderMulLighting);
 
 	terrain.init();
 	terrain.setShader(&shaderTerrain);
@@ -851,6 +861,7 @@ void destroy() {
 	modelColorBomb.destroy();
 	modelLolipop.destroy();
 	modelRadish.destroy();
+	modelCalaverita.destroy();
 	modelAutumnTree.destroy();
 	modelArbolFrondoso.destroy();
 	modelLamp1.destroy();
@@ -1306,6 +1317,15 @@ void applicationLoop() {
 			modelRadish.setScale(glm::vec3(0.3, 0.3, 0.3));
 			modelRadish.setOrientation(glm::vec3(0, RadishOrientation[i], 0));
 			modelRadish.render();
+		}
+
+		//Calaverita render
+		for (int i = 0; i < calavPosition.size(); i++) {
+			calavPosition[i].y = terrain.getHeightTerrain(calavPosition[i].x, RadishPosition[i].z);
+			modelCalaverita.setPosition(calavPosition[i].x, -0.5, calavPosition[i].z);
+			modelCalaverita.setScale(glm::vec3(0.015, 0.015, 0.015));
+			modelCalaverita.setOrientation(glm::vec3(0, calavOrientation[i], 0));
+			modelCalaverita.render();
 		}
 
 
