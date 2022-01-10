@@ -154,7 +154,7 @@ glm::mat4 modelMatrixLolipop = glm::mat4(1.0f);
 glm::mat4 modelMatrixBomb = glm::mat4(1.0f);
 glm::mat4 modelMatrixCandy = glm::mat4(1.0f);
 
-int animationIndex = 1;
+int animationIndex = 0;
 int modelSelected = 2;
 bool enableCountSelected = true;
 
@@ -1032,18 +1032,18 @@ bool processInput(bool continueApplication) {
 
 	if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
 		modelMatrixBoy = glm::rotate(modelMatrixBoy, glm::radians(5.0f), glm::vec3(0, 1, 0));
-		animationIndex = 0;
+		animationIndex = 1;
 	}
 	else if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
 		modelMatrixBoy = glm::rotate(modelMatrixBoy, glm::radians(-5.0f), glm::vec3(0, 1, 0));
-		animationIndex = 0;
+		animationIndex = 1;
 	}if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
 		modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, 0.5));
-		animationIndex = 0;
+		animationIndex = 1;
 	}
 	else if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
 		modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, -0.5));
-		animationIndex = 0;
+		animationIndex = 1;
 	}
 
 	bool keySpaceStatus = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
@@ -1176,7 +1176,7 @@ void applicationLoop() {
 		shaderMulLighting.setVectorFloat3("directionalLight.light.ambient", glm::value_ptr(glm::vec3(0.05, 0.05, 0.05)));
 		shaderMulLighting.setVectorFloat3("directionalLight.light.diffuse", glm::value_ptr(glm::vec3(0.3, 0.3, 0.3)));
 		shaderMulLighting.setVectorFloat3("directionalLight.light.specular", glm::value_ptr(glm::vec3(0.4, 0.4, 0.4)));
-		shaderMulLighting.setVectorFloat3("directionalLight.direction", glm::value_ptr(glm::vec3(-1.0, 0.0, 0.0)));
+		shaderMulLighting.setVectorFloat3("directionalLight.direction", glm::value_ptr(glm::vec3(-1.0, -1.0, 0.0)));
 
 		/*******************************************
 		 * Propiedades Luz direccional Terrain
@@ -1224,18 +1224,18 @@ void applicationLoop() {
 			matrixAdjustLamp = glm::translate(matrixAdjustLamp, lampMedPosition[i]);
 			matrixAdjustLamp = glm::rotate(matrixAdjustLamp, glm::radians(lampMedOrientation[i]), glm::vec3(0, 1, 0));
 			matrixAdjustLamp = glm::scale(matrixAdjustLamp, glm::vec3(0.5, 0.5, 0.5));
-			matrixAdjustLamp = glm::translate(matrixAdjustLamp, glm::vec3(0, 10.3585, 0));
+			matrixAdjustLamp = glm::translate(matrixAdjustLamp, glm::vec3(0, 6.8, 0));
 			glm::vec3 lampPosition = glm::vec3(matrixAdjustLamp[3]);
-			shaderMulLighting.setVectorFloat3("pointLights[" + std::to_string(i) + "].light.ambient", glm::value_ptr(glm::vec3(0.2, 0.16, 0.01)));
-			shaderMulLighting.setVectorFloat3("pointLights[" + std::to_string(i) + "].light.diffuse", glm::value_ptr(glm::vec3(0.4, 0.32, 0.02)));
-			shaderMulLighting.setVectorFloat3("pointLights[" + std::to_string(i) + "].light.specular", glm::value_ptr(glm::vec3(0.6, 0.58, 0.03)));
+			shaderMulLighting.setVectorFloat3("pointLights[" + std::to_string(i) + "].light.ambient", glm::value_ptr(glm::vec3(0.3, 0.26, 0.02)));
+			shaderMulLighting.setVectorFloat3("pointLights[" + std::to_string(i) + "].light.diffuse", glm::value_ptr(glm::vec3(0.46, 0.35, 0.04)));
+			shaderMulLighting.setVectorFloat3("pointLights[" + std::to_string(i) + "].light.specular", glm::value_ptr(glm::vec3(0.956, 0.913, 0.243)));
 			shaderMulLighting.setVectorFloat3("pointLights[" + std::to_string(i) + "].position", glm::value_ptr(lampPosition));
 			shaderMulLighting.setFloat("pointLights[" + std::to_string(i) + "].constant", 1.0);
 			shaderMulLighting.setFloat("pointLights[" + std::to_string(i) + "].linear", 0.09);
 			shaderMulLighting.setFloat("pointLights[" + std::to_string(i) + "].quadratic", 0.01);
-			shaderTerrain.setVectorFloat3("pointLights[" + std::to_string(i) + "].light.ambient", glm::value_ptr(glm::vec3(0.2, 0.16, 0.01)));
-			shaderTerrain.setVectorFloat3("pointLights[" + std::to_string(i) + "].light.diffuse", glm::value_ptr(glm::vec3(0.4, 0.32, 0.02)));
-			shaderTerrain.setVectorFloat3("pointLights[" + std::to_string(i) + "].light.specular", glm::value_ptr(glm::vec3(0.6, 0.58, 0.03)));
+			shaderTerrain.setVectorFloat3("pointLights[" + std::to_string(i) + "].light.ambient", glm::value_ptr(glm::vec3(0.3, 0.26, 0.02)));
+			shaderTerrain.setVectorFloat3("pointLights[" + std::to_string(i) + "].light.diffuse", glm::value_ptr(glm::vec3(0.46, 0.35, 0.04)));
+			shaderTerrain.setVectorFloat3("pointLights[" + std::to_string(i) + "].light.specular", glm::value_ptr(glm::vec3(0.956, 0.913, 0.243)));
 			shaderTerrain.setVectorFloat3("pointLights[" + std::to_string(i) + "].position", glm::value_ptr(lampPosition));
 			shaderTerrain.setFloat("pointLights[" + std::to_string(i) + "].constant", 1.0);
 			shaderTerrain.setFloat("pointLights[" + std::to_string(i) + "].linear", 0.09);
@@ -1570,6 +1570,18 @@ void applicationLoop() {
 		rockCollider.ratio = modelRoca.getSbb().ratio * 1.0;
 		addOrUpdateColliders(collidersSBB, "rock", rockCollider, matrixModelRoca);
 
+		//Collider de la fuente
+		glm::mat4 modelMatrixColliderFuente = glm::mat4(modelMatrixFountain);
+		modelMatrixColliderFuente[3][1] = terrain.getHeightTerrain(modelMatrixColliderFuente[3][0], modelMatrixColliderFuente[3][2]);
+		AbstractModel::OBB FountainCollider;
+		FountainCollider.u = glm::quat_cast(modelMatrixColliderFuente);
+		modelMatrixColliderFuente = glm::scale(modelMatrixColliderFuente, glm::vec3(10.0f, 10.0f, 10.0f));
+		modelMatrixColliderFuente = glm::translate(modelMatrixColliderFuente, modelFountain.getObb().c);
+		FountainCollider.c = modelMatrixColliderFuente[3];
+		FountainCollider.e = modelFountain.getObb().e * glm::vec3(10.0f, 10.0f, 10.0f);
+		addOrUpdateColliders(collidersOBB, "Fountain", FountainCollider, modelMatrixFountain);
+
+
 		//Colliders de la roca 2
 		for (int i = 0; i < roca2Position.size(); i++) {
 			AbstractModel::SBB rock2Collider;
@@ -1887,7 +1899,7 @@ void applicationLoop() {
 
 
 		// Constantes de animaciones
-		animationIndex = 1;
+		//animationIndex = 1;
 
 		/*******************************************
 		 * State machines
