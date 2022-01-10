@@ -183,12 +183,12 @@ std::vector<glm::vec3> basCandyPosition= {glm::vec3(-24.21, 5.5, 24.21),glm::vec
 std::vector<float> basCandyOrientation = { 30.0, 45.0, 60.0, 75.0 };
 
 //Color bomb
-std::vector<glm::vec3> colBombPosition = { glm::vec3(30.66, 0.0, -44.72), glm::vec3(59.37, 0.0, -48.43), glm::vec3(22.07, 0.0, 34.76), glm::vec3(41.8, 0.0, 37.9)};
+std::vector<glm::vec3> colBombPosition = { glm::vec3(30.66, 0.9, -44.72), glm::vec3(59.37, 0.9, -48.43), glm::vec3(22.07, 0.9, 34.76), glm::vec3(41.8, 0.9, 37.9)};
 std::vector<float> colBombOrientation = { 30.0, 45.0, 60.0, 75.0 };
 
 //Lolipop
 std::vector<glm::vec3> lolipopPosition = { glm::vec3(67.18, 0.0, 15.23), glm::vec3(76.95, 0.0, 47.65), glm::vec3(-12.5, 0.0, 5.86), glm::vec3(-27.93, 0.0, 61.13) };
-std::vector<float> lolipopOrientation = { 30.0, 45.0, 60.0, 75.0 };
+std::vector<float> lolipopOrientation = { 180, 180, -180, -180};
 
 // Blending model unsorted
 std::map<std::string, glm::vec3> blendingUnsorted = {
@@ -1278,6 +1278,15 @@ void applicationLoop() {
 			modelColorBomb.render();
 		}
 
+		//Lolipop hammer
+		for (int i = 0; i < lolipopPosition.size(); i++) {
+			lolipopPosition[i].y = terrain.getHeightTerrain(lolipopPosition[i].x, lolipopPosition[i].z);
+			modelLolipop.setPosition(glm::vec3(lolipopPosition[i].x, 0.5, lolipopPosition[i].z));
+			modelLolipop.setScale(glm::vec3(0.03, 0.03, 0.03));
+			modelLolipop.setOrientation(glm::vec3(0, lolipopOrientation[i], 0));
+			modelLolipop.render();
+		}
+
 
 		// Render the lamps
 		for (int i = 0; i < lamp1Position.size(); i++) {
@@ -1508,12 +1517,29 @@ void applicationLoop() {
 		for (int i = 0; i < basCandyPosition.size(); i++) {
 			AbstractModel::SBB colBombCollider;
 			glm::mat4 modelMatrixColliderColBomb = glm::mat4(1.0);
-			modelMatrixColliderColBomb = glm::translate(modelMatrixColliderColBomb, glm::vec3(colBombPosition[i].x, 1.2, colBombPosition[i].z));
+			modelMatrixColliderColBomb = glm::translate(modelMatrixColliderColBomb, glm::vec3(colBombPosition[i].x, 1.0, colBombPosition[i].z));
 			modelMatrixColliderColBomb = glm::rotate(modelMatrixColliderColBomb, glm::radians(colBombOrientation[i]),
-				glm::vec3(0, 1, 0));
+				glm::vec3(1, 0, 0));
 			colBombCollider.c = glm::vec3(modelMatrixColliderColBomb[3]);
-			colBombCollider.ratio = modelColorBomb.getSbb().ratio * 0.06;
+			colBombCollider.ratio = modelColorBomb.getSbb().ratio * 0.07;
 			addOrUpdateColliders(collidersSBB, "Col bomb no. - " + std::to_string(i), colBombCollider, modelMatrixColliderColBomb);
+		}
+
+		//Lolipop colliders
+		for (int i = 0; i < lolipopPosition.size(); i++) {
+			AbstractModel::OBB lolipopCollider;
+			glm::mat4 modelMatrixColliderLolipop = glm::mat4(1.0);
+			modelMatrixColliderLolipop = glm::translate(modelMatrixColliderLolipop, glm::vec3(lolipopPosition[i].x, 0.5, lolipopPosition[i].z));
+			modelMatrixColliderLolipop = glm::rotate(modelMatrixColliderLolipop, glm::radians(lolipopOrientation[i]),
+				glm::vec3(0, 1, 0));
+			addOrUpdateColliders(collidersOBB, "Lolipop no. -" + std::to_string(i), lolipopCollider, modelMatrixColliderLolipop);
+			// Set the orientation of collider before doing the scale
+			lolipopCollider.u = glm::quat_cast(modelMatrixColliderLolipop);
+			modelMatrixColliderLolipop = glm::scale(modelMatrixColliderLolipop, glm::vec3(0.03, 0.03, 0.5));
+			modelMatrixColliderLolipop = glm::translate(modelMatrixColliderLolipop, modelLolipop.getObb().c);
+			lolipopCollider.c = glm::vec3(modelMatrixColliderLolipop[3]);
+			lolipopCollider.e = modelLolipop.getObb().e * glm::vec3(0.03, 0.03, 0.5);
+			std::get<0>(collidersOBB.find("Lolipop no. -" + std::to_string(i))->second) = lolipopCollider;
 		}
 
 
@@ -1597,7 +1623,7 @@ void applicationLoop() {
 			glm::vec3(boyModelAnimate.getObb().c.x,
 				boyModelAnimate.getObb().c.y,
 				boyModelAnimate.getObb().c.z));
-		mayowCollider.e = boyModelAnimate.getObb().e * glm::vec3(0.021, 0.021, 0.021) * glm::vec3(0.787401574, 0.787401574, 0.787401574);
+		mayowCollider.e = boyModelAnimate.getObb().e * glm::vec3(0.05, 0.05, 0.05) * glm::vec3(0.787401574, 0.787401574, 0.787401574);
 		mayowCollider.c = glm::vec3(modelmatrixColliderMayow[3]);
 		addOrUpdateColliders(collidersOBB, "mayow", mayowCollider, modelMatrixBoy);
 
