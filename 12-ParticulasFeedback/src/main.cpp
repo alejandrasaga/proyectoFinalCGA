@@ -1322,7 +1322,7 @@ void applicationLoop() {
 		//Calaverita render
 		for (int i = 0; i < calavPosition.size(); i++) {
 			calavPosition[i].y = terrain.getHeightTerrain(calavPosition[i].x, RadishPosition[i].z);
-			modelCalaverita.setPosition(calavPosition[i].x, -0.5, calavPosition[i].z);
+			modelCalaverita.setPosition(glm::vec3(calavPosition[i].x, -0.5, calavPosition[i].z));
 			modelCalaverita.setScale(glm::vec3(0.015, 0.015, 0.015));
 			modelCalaverita.setOrientation(glm::vec3(0, calavOrientation[i], 0));
 			modelCalaverita.render();
