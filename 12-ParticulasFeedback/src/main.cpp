@@ -1322,8 +1322,8 @@ void applicationLoop() {
 		//Calaverita render
 		for (int i = 0; i < calavPosition.size(); i++) {
 			calavPosition[i].y = terrain.getHeightTerrain(calavPosition[i].x, RadishPosition[i].z);
-			modelCalaverita.setPosition(glm::vec3(calavPosition[i].x, -0.1, calavPosition[i].z));
-			modelCalaverita.setScale(glm::vec3(0.015, 0.015, 0.015));
+			modelCalaverita.setPosition(glm::vec3(calavPosition[i].x, 0.4, calavPosition[i].z));
+			modelCalaverita.setScale(glm::vec3(0.02, 0.02, 0.02));
 			modelCalaverita.setOrientation(glm::vec3(0, calavOrientation[i], 0));
 			modelCalaverita.render();
 		}
@@ -1603,11 +1603,11 @@ void applicationLoop() {
 		for (int i = 0; i < calavPosition.size(); i++) {
 			AbstractModel::SBB calaveritaCollider;
 			glm::mat4 modelMatrixColliderCalaverita = glm::mat4(1.0);
-			modelMatrixColliderCalaverita = glm::translate(modelMatrixColliderCalaverita, glm::vec3(calavPosition[i].x, 1.2, calavPosition[i].z));
+			modelMatrixColliderCalaverita = glm::translate(modelMatrixColliderCalaverita, glm::vec3(calavPosition[i].x, 0.5, calavPosition[i].z));
 			modelMatrixColliderCalaverita = glm::rotate(modelMatrixColliderCalaverita, glm::radians(calavOrientation[i]),
 				glm::vec3(0, 1, 0));
 			calaveritaCollider.c = glm::vec3(modelMatrixColliderCalaverita[3]);
-			calaveritaCollider.ratio = modelCalaverita.getSbb().ratio * 0.015;
+			calaveritaCollider.ratio = modelCalaverita.getSbb().ratio * 0.02;
 			addOrUpdateColliders(collidersSBB, "Calaverita no. - " + std::to_string(i), calaveritaCollider, modelMatrixColliderCalaverita);
 		}
 
