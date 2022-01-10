@@ -1316,7 +1316,12 @@ void applicationLoop() {
 		//Color bomb
 		for (int i = 0; i < colBombPosition.size(); i++) {
 			colBombPosition[i].y = terrain.getHeightTerrain(colBombPosition[i].x, colBombPosition[i].z);
-			modelColorBomb.setPosition(glm::vec3(colBombPosition[i].x, 0.9, colBombPosition[i].z));
+			if (candyCollider == true && i == numElemento) {
+				modelColorBomb.setPosition(glm::vec3(colBombPosition[i].x, -5.9, colBombPosition[i].z));
+			}
+			else {
+				modelColorBomb.setPosition(glm::vec3(colBombPosition[i].x, 0.9, colBombPosition[i].z));
+			}
 			modelColorBomb.setScale(glm::vec3(0.065, 0.065, 0.065));
 			modelColorBomb.setOrientation(glm::vec3(colBombOrientation[i], 0, 0));
 			modelColorBomb.render();
@@ -1586,7 +1591,12 @@ void applicationLoop() {
 		for (int i = 0; i < basCandyPosition.size(); i++) {
 			AbstractModel::SBB colBombCollider;
 			glm::mat4 modelMatrixColliderColBomb = glm::mat4(1.0);
-			modelMatrixColliderColBomb = glm::translate(modelMatrixColliderColBomb, glm::vec3(colBombPosition[i].x, 1.0, colBombPosition[i].z));
+			if (candyCollider == true && i == numElemento) {
+				modelMatrixColliderColBomb = glm::translate(modelMatrixColliderColBomb, glm::vec3(colBombPosition[i].x, 7.0, colBombPosition[i].z));
+			}
+			else {
+				modelMatrixColliderColBomb = glm::translate(modelMatrixColliderColBomb, glm::vec3(colBombPosition[i].x, 1.0, colBombPosition[i].z));
+			}
 			modelMatrixColliderColBomb = glm::rotate(modelMatrixColliderColBomb, glm::radians(colBombOrientation[i]),
 				glm::vec3(1, 0, 0));
 			colBombCollider.c = glm::vec3(modelMatrixColliderColBomb[3]);
@@ -1808,19 +1818,20 @@ void applicationLoop() {
 			addOrUpdateCollisionDetection(collisionDetection, it->first, isCollision);
 		}
 
-		for (std::map<std::string,
-			std::tuple<AbstractModel::SBB, glm::mat4, glm::mat4> >::iterator it =
-			collidersSBB.begin(); it != collidersSBB.end(); it++) {
+		for (std::map<std::string, std::tuple<AbstractModel::SBB, glm::mat4, glm::mat4> >::iterator it = collidersSBB.begin(); it != collidersSBB.end(); it++) {
 			bool isCollision = false;
 			std::map<std::string,
 				std::tuple<AbstractModel::OBB, glm::mat4, glm::mat4> >::iterator jt =
 				collidersOBB.begin();
 			for (; jt != collidersOBB.end(); jt++) {
-				if (testSphereOBox(std::get<0>(it->second),
-					std::get<0>(jt->second))) {
-					std::cout << "Colision " << it->first << " with "
-						<< jt->first << std::endl;
+				if (testSphereOBox(std::get<0>(it->second), std::get<0>(jt->second))) {
+					std::cout << "Colision " << it->first << " with " << jt->first << std::endl;
 					isCollision = true;
+						if (isCollision) {
+							elemento = it->first;
+							numElemento = colisionesObjetos(elemento);
+							candyCollider = true;
+						}
 					addOrUpdateCollisionDetection(collisionDetection, jt->first, isCollision);
 				}
 			}
