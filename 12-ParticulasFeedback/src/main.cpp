@@ -105,8 +105,7 @@ Model modelCasa;
 
 // Lamps
 Model modelLamp1;
-Model modelLamp2;
-Model modelLampPost2;
+
 // Hierbas
 Model modelMultipleGrass;
 // Fountain
@@ -170,10 +169,6 @@ std::vector<glm::vec3> lamp1Position = { glm::vec3(-7.03, 0, -19.14), glm::vec3(
 		24.41, 0, -34.57), glm::vec3(-10.15, 0, -54.10) };
 
 std::vector<float> lamp1Orientation = { -17.0, -82.67, 23.70 };
-
-std::vector<glm::vec3> lamp2Position = { glm::vec3(-36.52, 0, -23.24),
-		glm::vec3(-52.73, 0, -3.90) };
-std::vector<float> lamp2Orientation = { 21.37 + 90, -65.0 + 90 };
 
 //Pastos position
 std::vector<glm::vec3> pastoMultiplePosition = { glm::vec3(-7.5, 0.0, -50.5), glm::vec3(37.0, 0.0, -30.0), glm::vec3(-3.5, 0.0, 20.5),
@@ -541,10 +536,6 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	//Lamp models
 	modelLamp1.loadModel("../models/Street-Lamp-Black/objLamp.obj");
 	modelLamp1.setShader(&shaderMulLighting);
-	modelLamp2.loadModel("../models/Street_Light/Lamp.obj");
-	modelLamp2.setShader(&shaderMulLighting);
-	modelLampPost2.loadModel("../models/Street_Light/LampPost.obj");
-	modelLampPost2.setShader(&shaderMulLighting);
 
 	//Model arbol autumn tree
 	modelAutumnTree.loadModel("../models/Autumn Tree/Autumn Tree.obj");
@@ -899,8 +890,6 @@ void destroy() {
 	modelAutumnTree.destroy();
 	modelArbolFrondoso.destroy();
 	modelLamp1.destroy();
-	modelLamp2.destroy();
-	modelLampPost2.destroy();
 	modelMultipleGrass.destroy();
 	modelFountain.destroy();
 
@@ -1211,8 +1200,8 @@ void applicationLoop() {
 		/*******************************************
 		 * Propiedades PointLights
 		 *******************************************/
-		shaderMulLighting.setInt("pointLightCount", lamp1Position.size() + lamp2Orientation.size());
-		shaderTerrain.setInt("pointLightCount", lamp1Position.size() + lamp2Orientation.size());
+		shaderMulLighting.setInt("pointLightCount", lamp1Position.size());
+		shaderTerrain.setInt("pointLightCount", lamp1Position.size());
 		for (int i = 0; i < lamp1Position.size(); i++) {
 			glm::mat4 matrixAdjustLamp = glm::mat4(1.0f);
 			matrixAdjustLamp = glm::translate(matrixAdjustLamp, lamp1Position[i]);
@@ -1235,29 +1224,7 @@ void applicationLoop() {
 			shaderTerrain.setFloat("pointLights[" + std::to_string(i) + "].linear", 0.09);
 			shaderTerrain.setFloat("pointLights[" + std::to_string(i) + "].quadratic", 0.02);
 		}
-		for (int i = 0; i < lamp2Position.size(); i++) {
-			glm::mat4 matrixAdjustLamp = glm::mat4(1.0f);
-			matrixAdjustLamp = glm::translate(matrixAdjustLamp, lamp2Position[i]);
-			matrixAdjustLamp = glm::rotate(matrixAdjustLamp, glm::radians(lamp2Orientation[i]), glm::vec3(0, 1, 0));
-			matrixAdjustLamp = glm::scale(matrixAdjustLamp, glm::vec3(1.0, 1.0, 1.0));
-			matrixAdjustLamp = glm::translate(matrixAdjustLamp, glm::vec3(0.759521, 5.00174, 0));
-			glm::vec3 lampPosition = glm::vec3(matrixAdjustLamp[3]);
-			shaderMulLighting.setVectorFloat3("pointLights[" + std::to_string(lamp1Position.size() + i) + "].light.ambient", glm::value_ptr(glm::vec3(0.2, 0.16, 0.01)));
-			shaderMulLighting.setVectorFloat3("pointLights[" + std::to_string(lamp1Position.size() + i) + "].light.diffuse", glm::value_ptr(glm::vec3(0.4, 0.32, 0.02)));
-			shaderMulLighting.setVectorFloat3("pointLights[" + std::to_string(lamp1Position.size() + i) + "].light.specular", glm::value_ptr(glm::vec3(0.6, 0.58, 0.03)));
-			shaderMulLighting.setVectorFloat3("pointLights[" + std::to_string(lamp1Position.size() + i) + "].position", glm::value_ptr(lampPosition));
-			shaderMulLighting.setFloat("pointLights[" + std::to_string(lamp1Position.size() + i) + "].constant", 1.0);
-			shaderMulLighting.setFloat("pointLights[" + std::to_string(lamp1Position.size() + i) + "].linear", 0.09);
-			shaderMulLighting.setFloat("pointLights[" + std::to_string(lamp1Position.size() + i) + "].quadratic", 0.01);
-			shaderTerrain.setVectorFloat3("pointLights[" + std::to_string(lamp1Position.size() + i) + "].light.ambient", glm::value_ptr(glm::vec3(0.2, 0.16, 0.01)));
-			shaderTerrain.setVectorFloat3("pointLights[" + std::to_string(lamp1Position.size() + i) + "].light.diffuse", glm::value_ptr(glm::vec3(0.4, 0.32, 0.02)));
-			shaderTerrain.setVectorFloat3("pointLights[" + std::to_string(lamp1Position.size() + i) + "].light.specular", glm::value_ptr(glm::vec3(0.6, 0.58, 0.03)));
-			shaderTerrain.setVectorFloat3("pointLights[" + std::to_string(lamp1Position.size() + i) + "].position", glm::value_ptr(lampPosition));
-			shaderTerrain.setFloat("pointLights[" + std::to_string(lamp1Position.size() + i) + "].constant", 1.0);
-			shaderTerrain.setFloat("pointLights[" + std::to_string(lamp1Position.size() + i) + "].linear", 0.09);
-			shaderTerrain.setFloat("pointLights[" + std::to_string(lamp1Position.size() + i) + "].quadratic", 0.02);
-		}
-
+		
 		/*******************************************
 		 * Terrain Cesped
 		 *******************************************/
@@ -1379,17 +1346,7 @@ void applicationLoop() {
 			modelLamp1.render();
 		}
 
-		for (int i = 0; i < lamp2Position.size(); i++) {
-			lamp2Position[i].y = terrain.getHeightTerrain(lamp2Position[i].x, lamp2Position[i].z);
-			modelLamp2.setPosition(lamp2Position[i]);
-			modelLamp2.setScale(glm::vec3(1.0, 1.0, 1.0));
-			modelLamp2.setOrientation(glm::vec3(0, lamp2Orientation[i], 0));
-			modelLamp2.render();
-			modelLampPost2.setPosition(lamp2Position[i]);
-			modelLampPost2.setScale(glm::vec3(1.0, 1.0, 1.0));
-			modelLampPost2.setOrientation(glm::vec3(0, lamp2Orientation[i], 0));
-			modelLampPost2.render();
-		}
+	
 		//Render de la roca 2
 		for (int i = 0; i < roca2Position.size(); i++) {
 			roca2Position[i].y = terrain.getHeightTerrain(roca2Position[i].x, roca2Position[i].z);
@@ -1719,22 +1676,6 @@ void applicationLoop() {
 			std::get<0>(collidersOBB.find("Arbol frondoso no. - " + std::to_string(i))->second) = arbFronCollider;
 		}
 
-		// Lamps2 colliders
-		for (int i = 0; i < lamp2Position.size(); i++) {
-			AbstractModel::OBB lampCollider;
-			glm::mat4 modelMatrixColliderLamp = glm::mat4(1.0);
-			modelMatrixColliderLamp = glm::translate(modelMatrixColliderLamp, lamp2Position[i]);
-			modelMatrixColliderLamp = glm::rotate(modelMatrixColliderLamp, glm::radians(lamp2Orientation[i]),
-				glm::vec3(0, 1, 0));
-			addOrUpdateColliders(collidersOBB, "lamp2-" + std::to_string(i), lampCollider, modelMatrixColliderLamp);
-			// Set the orientation of collider before doing the scale
-			lampCollider.u = glm::quat_cast(modelMatrixColliderLamp);
-			modelMatrixColliderLamp = glm::scale(modelMatrixColliderLamp, glm::vec3(1.0, 1.0, 1.0));
-			modelMatrixColliderLamp = glm::translate(modelMatrixColliderLamp, modelLampPost2.getObb().c);
-			lampCollider.c = glm::vec3(modelMatrixColliderLamp[3]);
-			lampCollider.e = modelLampPost2.getObb().e * glm::vec3(1.0, 1.0, 1.0);
-			std::get<0>(collidersOBB.find("lamp2-" + std::to_string(i))->second) = lampCollider;
-		}
 
 		// Collider de mayow
 		AbstractModel::OBB mayowCollider;
