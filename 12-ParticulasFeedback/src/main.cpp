@@ -233,6 +233,14 @@ std::map<std::string, glm::vec3> blendingUnsorted = {
 double deltaTime;
 double currTime, lastTime;
 
+//Variables para cuando se recogen dulces y vegetales
+bool candyCollider = false;
+bool veggieCollider = false;
+std::vector<glm::vec3> basCandyPosCollider = basCandyPosition;
+std::vector<glm::vec3> colBombPosCollider = colBombPosition;
+std::vector<glm::vec3> lolipopPosCollider = lolipopPosition;
+std::vector<glm::vec3> radishPosCollider = RadishPosition;
+
 //musica
 ISoundEngine* engine = createIrrKlangDevice();
 
@@ -1814,10 +1822,12 @@ void applicationLoop() {
 				if (!colIt->second)
 					addOrUpdateColliders(collidersOBB, jt->first);
 				else {
-					if (jt->first.compare("Boy") == 0)
+					if (jt->first.compare("Boy") == 0) {
 						modelMatrixBoy = std::get<1>(jt->second);
-					//if (jt->first.compare("camaraAnim") == 0)
-						//cambiar
+
+					}
+						
+					
 				}
 			}
 		}
