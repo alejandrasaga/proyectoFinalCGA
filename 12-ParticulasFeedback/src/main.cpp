@@ -1325,7 +1325,12 @@ void applicationLoop() {
 		//Lolipop hammer
 		for (int i = 0; i < lolipopPosition.size(); i++) {
 			lolipopPosition[i].y = terrain.getHeightTerrain(lolipopPosition[i].x, lolipopPosition[i].z);
-			modelLolipop.setPosition(glm::vec3(lolipopPosition[i].x, 0.5, lolipopPosition[i].z));
+			if (candyCollider == true && i == numElemento) {
+				modelLolipop.setPosition(glm::vec3(lolipopPosition[i].x, -5.5, lolipopPosition[i].z));
+			}
+			else {
+				modelLolipop.setPosition(glm::vec3(lolipopPosition[i].x, 0.5, lolipopPosition[i].z));
+			}
 			modelLolipop.setScale(glm::vec3(0.03, 0.03, 0.03));
 			modelLolipop.setOrientation(glm::vec3(0, lolipopOrientation[i], 0));
 			modelLolipop.render();
@@ -1593,7 +1598,12 @@ void applicationLoop() {
 		for (int i = 0; i < lolipopPosition.size(); i++) {
 			AbstractModel::OBB lolipopCollider;
 			glm::mat4 modelMatrixColliderLolipop = glm::mat4(1.0);
-			modelMatrixColliderLolipop = glm::translate(modelMatrixColliderLolipop, glm::vec3(lolipopPosition[i].x, 0.5, lolipopPosition[i].z));
+			if (candyCollider == true && i == numElemento) {
+				modelMatrixColliderLolipop = glm::translate(modelMatrixColliderLolipop, glm::vec3(lolipopPosition[i].x, -5.5, lolipopPosition[i].z));
+			}
+			else {
+				modelMatrixColliderLolipop = glm::translate(modelMatrixColliderLolipop, glm::vec3(lolipopPosition[i].x, 0.5, lolipopPosition[i].z));
+			}
 			modelMatrixColliderLolipop = glm::rotate(modelMatrixColliderLolipop, glm::radians(lolipopOrientation[i]),
 				glm::vec3(0, 1, 0));
 			addOrUpdateColliders(collidersOBB, "Lolipop" + std::to_string(i), lolipopCollider, modelMatrixColliderLolipop);
