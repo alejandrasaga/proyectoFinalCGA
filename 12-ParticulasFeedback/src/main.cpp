@@ -236,6 +236,7 @@ double currTime, lastTime;
 //Variables para cuando se recogen dulces y vegetales
 bool candyCollider = false;
 bool veggieCollider = false;
+bool calaveritaAzucarCollider = false;
 std::string elemento;
 int numElemento = -1;
 
@@ -1360,7 +1361,11 @@ void applicationLoop() {
 		//Calaverita render
 		for (int i = 0; i < calavPosition.size(); i++) {
 			calavPosition[i].y = terrain.getHeightTerrain(calavPosition[i].x, RadishPosition[i].z);
-			modelCalaverita.setPosition(glm::vec3(calavPosition[i].x, 0.4, calavPosition[i].z));
+			if (calaveritaAzucarCollider == true && i == numElemento) {
+			modelCalaverita.setPosition(glm::vec3(calavPosition[i].x, 5.4, calavPosition[i].z));
+			} else {
+				modelCalaverita.setPosition(glm::vec3(calavPosition[i].x, 0.4, calavPosition[i].z));
+			}
 			modelCalaverita.setScale(glm::vec3(0.02, 0.02, 0.02));
 			modelCalaverita.setOrientation(glm::vec3(0, calavOrientation[i], 0));
 			modelCalaverita.render();
@@ -1659,7 +1664,13 @@ void applicationLoop() {
 		for (int i = 0; i < calavPosition.size(); i++) {
 			AbstractModel::SBB calaveritaCollider;
 			glm::mat4 modelMatrixColliderCalaverita = glm::mat4(1.0);
-			modelMatrixColliderCalaverita = glm::translate(modelMatrixColliderCalaverita, glm::vec3(calavPosition[i].x, 0.5, calavPosition[i].z));
+			if (calaveritaAzucarCollider == true && i == numElemento) {
+				modelMatrixColliderCalaverita = glm::translate(modelMatrixColliderCalaverita, glm::vec3(calavPosition[i].x, 5.5, calavPosition[i].z));
+			}
+			else {
+				modelMatrixColliderCalaverita = glm::translate(modelMatrixColliderCalaverita, glm::vec3(calavPosition[i].x, 0.5, calavPosition[i].z));
+			}
+			
 			modelMatrixColliderCalaverita = glm::rotate(modelMatrixColliderCalaverita, glm::radians(calavOrientation[i]),
 				glm::vec3(0, 1, 0));
 			calaveritaCollider.c = glm::vec3(modelMatrixColliderCalaverita[3]);
@@ -1839,6 +1850,7 @@ void applicationLoop() {
 							elemento = it->first;
 							numElemento = colisionesObjetos(elemento);
 							candyCollider = true;
+							calaveritaAzucarCollider = true;
 						}
 					addOrUpdateCollisionDetection(collisionDetection, jt->first, isCollision);
 				}
