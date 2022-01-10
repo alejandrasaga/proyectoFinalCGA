@@ -488,7 +488,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelLolipop.loadModel("../models/LolipopHammer/LolipopHammer.obj");
 	modelLolipop.setShader(&shaderMulLighting);
 
-	modelCarrot.loadModel("../models/Carrot/Carrot.obj");
+	modelCarrot.loadModel("../models/radish/radish.obj");
 	modelCarrot.setShader(&shaderMulLighting);
 
 	terrain.init();
