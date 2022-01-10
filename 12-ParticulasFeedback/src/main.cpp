@@ -1563,6 +1563,23 @@ void applicationLoop() {
 			std::get<0>(collidersOBB.find("Lolipop no. -" + std::to_string(i))->second) = lolipopCollider;
 		}
 
+		//Carrot colliders
+		for (int i = 0; i < carrotPosition.size(); i++) {
+			AbstractModel::OBB carrotCollider;
+			glm::mat4 modelMatrixColliderCarrot = glm::mat4(1.0);
+			modelMatrixColliderCarrot = glm::translate(modelMatrixColliderCarrot, glm::vec3(carrotPosition[i].x, 0.5, carrotPosition[i].z));
+			modelMatrixColliderCarrot = glm::rotate(modelMatrixColliderCarrot, glm::radians(lolipopOrientation[i]),
+				glm::vec3(0, 1, 0));
+			addOrUpdateColliders(collidersOBB, "Carrot no. -" + std::to_string(i), carrotCollider, modelMatrixColliderCarrot);
+			// Set the orientation of collider before doing the scale
+			carrotCollider.u = glm::quat_cast(modelMatrixColliderCarrot);
+			modelMatrixColliderCarrot = glm::scale(modelMatrixColliderCarrot, glm::vec3(1.25, 1.25, 1.25));
+			modelMatrixColliderCarrot = glm::translate(modelMatrixColliderCarrot, modelCarrot.getObb().c);
+			carrotCollider.c = glm::vec3(modelMatrixColliderCarrot[3]);
+			carrotCollider.e = modelCarrot.getObb().e * glm::vec3(1.25, 1.25, 1.25);
+			std::get<0>(collidersOBB.find("Carrot no. -" + std::to_string(i))->second) = carrotCollider;
+		}
+
 
 		// Lamps1 colliders
 		for (int i = 0; i < lamp1Position.size(); i++) {
