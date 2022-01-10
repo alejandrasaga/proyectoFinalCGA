@@ -236,6 +236,8 @@ double currTime, lastTime;
 //Variables para cuando se recogen dulces y vegetales
 bool candyCollider = false;
 bool veggieCollider = false;
+std::string elemento;
+int numElemento = -1;
 std::vector<glm::vec3> basCandyPosCollider = basCandyPosition;
 std::vector<glm::vec3> colBombPosCollider = colBombPosition;
 std::vector<glm::vec3> lolipopPosCollider = lolipopPosition;
@@ -1058,6 +1060,14 @@ bool processInput(bool continueApplication) {
 	return continueApplication;
 }
 
+int colisionesObjetos(std::string tipoElemento) {
+	tipoElemento = elemento;
+	char numC = tipoElemento.back();
+	int num = numC - 48;
+	std::cout << "Numero " << num << std::endl;
+	return num;
+}
+
 void applicationLoop() {
 	bool psi = true;
 
@@ -1323,8 +1333,13 @@ void applicationLoop() {
 
 		//Radish render
 		for (int i = 0; i < RadishPosition.size(); i++) {
-			lolipopPosition[i].y = terrain.getHeightTerrain(RadishPosition[i].x, RadishPosition[i].z);
-			modelRadish.setPosition(glm::vec3(RadishPosition[i].x, 0.5, RadishPosition[i].z));
+			RadishPosition[i].y = terrain.getHeightTerrain(RadishPosition[i].x, RadishPosition[i].z);
+			if (veggieCollider == true && i == numElemento) {
+				modelRadish.setPosition(glm::vec3(RadishPosition[i].x, -5.5, RadishPosition[i].z));
+			}
+			else {
+				modelRadish.setPosition(glm::vec3(RadishPosition[i].x, 0.5, RadishPosition[i].z));
+			}
 			modelRadish.setScale(glm::vec3(0.3, 0.3, 0.3));
 			modelRadish.setOrientation(glm::vec3(0, RadishOrientation[i], 0));
 			modelRadish.render();
@@ -1559,7 +1574,7 @@ void applicationLoop() {
 				glm::vec3(0, 1, 0));
 			basCandyCollider.c = glm::vec3(modelMatrixColliderBasCandy[3]);
 			basCandyCollider.ratio = modelBasicCandy.getSbb().ratio * 0.002;
-			addOrUpdateColliders(collidersSBB, "Basic Candy no. - " + std::to_string(i), basCandyCollider, modelMatrixColliderBasCandy);
+			addOrUpdateColliders(collidersSBB, "BasicCandy" + std::to_string(i), basCandyCollider, modelMatrixColliderBasCandy);
 		}
 
 		//Color bomb
@@ -1571,7 +1586,7 @@ void applicationLoop() {
 				glm::vec3(1, 0, 0));
 			colBombCollider.c = glm::vec3(modelMatrixColliderColBomb[3]);
 			colBombCollider.ratio = modelColorBomb.getSbb().ratio * 0.07;
-			addOrUpdateColliders(collidersSBB, "Col bomb no. - " + std::to_string(i), colBombCollider, modelMatrixColliderColBomb);
+			addOrUpdateColliders(collidersSBB, "ColorBomb" + std::to_string(i), colBombCollider, modelMatrixColliderColBomb);
 		}
 
 		//Lolipop colliders
@@ -1581,31 +1596,36 @@ void applicationLoop() {
 			modelMatrixColliderLolipop = glm::translate(modelMatrixColliderLolipop, glm::vec3(lolipopPosition[i].x, 0.5, lolipopPosition[i].z));
 			modelMatrixColliderLolipop = glm::rotate(modelMatrixColliderLolipop, glm::radians(lolipopOrientation[i]),
 				glm::vec3(0, 1, 0));
-			addOrUpdateColliders(collidersOBB, "Lolipop no. -" + std::to_string(i), lolipopCollider, modelMatrixColliderLolipop);
+			addOrUpdateColliders(collidersOBB, "Lolipop" + std::to_string(i), lolipopCollider, modelMatrixColliderLolipop);
 			// Set the orientation of collider before doing the scale
 			lolipopCollider.u = glm::quat_cast(modelMatrixColliderLolipop);
 			modelMatrixColliderLolipop = glm::scale(modelMatrixColliderLolipop, glm::vec3(0.03, 0.03, 0.015));
 			modelMatrixColliderLolipop = glm::translate(modelMatrixColliderLolipop, modelLolipop.getObb().c);
 			lolipopCollider.c = glm::vec3(modelMatrixColliderLolipop[3]);
 			lolipopCollider.e = modelLolipop.getObb().e * glm::vec3(0.03, 0.03, 0.015);
-			std::get<0>(collidersOBB.find("Lolipop no. -" + std::to_string(i))->second) = lolipopCollider;
+			std::get<0>(collidersOBB.find("Lolipop" + std::to_string(i))->second) = lolipopCollider;
 		}
 
 		//Radish colliders
 		for (int i = 0; i < RadishPosition.size(); i++) {
 			AbstractModel::OBB RadishCollider;
 			glm::mat4 modelMatrixColliderRadish = glm::mat4(1.0);
-			modelMatrixColliderRadish = glm::translate(modelMatrixColliderRadish, glm::vec3(RadishPosition[i].x, 0.5, RadishPosition[i].z));
+			if (veggieCollider == true && i == numElemento) {
+				modelMatrixColliderRadish = glm::translate(modelMatrixColliderRadish, glm::vec3(RadishPosition[i].x, -5.5, RadishPosition[i].z));
+			}
+			else {
+				modelMatrixColliderRadish = glm::translate(modelMatrixColliderRadish, glm::vec3(RadishPosition[i].x, 0.5, RadishPosition[i].z));
+			}
 			modelMatrixColliderRadish = glm::rotate(modelMatrixColliderRadish, glm::radians(lolipopOrientation[i]),
 				glm::vec3(0, 1, 0));
-			addOrUpdateColliders(collidersOBB, "Radish no. -" + std::to_string(i), RadishCollider, modelMatrixColliderRadish);
+			addOrUpdateColliders(collidersOBB, "Radish" + std::to_string(i), RadishCollider, modelMatrixColliderRadish);
 			// Set the orientation of collider before doing the scale
 			RadishCollider.u = glm::quat_cast(modelMatrixColliderRadish);
 			modelMatrixColliderRadish = glm::scale(modelMatrixColliderRadish, glm::vec3(0.3, 0.3, 0.3));
 			modelMatrixColliderRadish = glm::translate(modelMatrixColliderRadish, modelRadish.getObb().c);
 			RadishCollider.c = glm::vec3(modelMatrixColliderRadish[3]);
 			RadishCollider.e = modelRadish.getObb().e * glm::vec3(0.3, 0.3, 0.3);
-			std::get<0>(collidersOBB.find("Radish no. -" + std::to_string(i))->second) = RadishCollider;
+			std::get<0>(collidersOBB.find("Radish" + std::to_string(i))->second) = RadishCollider;
 		}
 		//Collider de calaverita
 		for (int i = 0; i < calavPosition.size(); i++) {
@@ -1616,7 +1636,7 @@ void applicationLoop() {
 				glm::vec3(0, 1, 0));
 			calaveritaCollider.c = glm::vec3(modelMatrixColliderCalaverita[3]);
 			calaveritaCollider.ratio = modelCalaverita.getSbb().ratio * 0.03;
-			addOrUpdateColliders(collidersSBB, "Calaverita no. - " + std::to_string(i), calaveritaCollider, modelMatrixColliderCalaverita);
+			addOrUpdateColliders(collidersSBB, "Calaverita" + std::to_string(i), calaveritaCollider, modelMatrixColliderCalaverita);
 		}
 		//Casa colliders
 		for (int i = 0; i < casaPosition.size(); i++) {
@@ -1750,36 +1770,28 @@ void applicationLoop() {
 		/*******************************************
 		 * Test Colisions
 		 *******************************************/
-		for (std::map<std::string,
-			std::tuple<AbstractModel::OBB, glm::mat4, glm::mat4> >::iterator it =
-			collidersOBB.begin(); it != collidersOBB.end(); it++) {
+		for (std::map<std::string, std::tuple<AbstractModel::OBB, glm::mat4, glm::mat4> >::iterator it = collidersOBB.begin(); it != collidersOBB.end(); it++) {
 			bool isCollision = false;
-			for (std::map<std::string,
-				std::tuple<AbstractModel::OBB, glm::mat4, glm::mat4> >::iterator jt =
-				collidersOBB.begin(); jt != collidersOBB.end(); jt++) {
-				if (it != jt
-					&& testOBBOBB(std::get<0>(it->second),
-						std::get<0>(jt->second))) {
-					std::cout << "Colision " << it->first << " with "
-						<< jt->first << std::endl;
+			for (std::map<std::string, std::tuple<AbstractModel::OBB, glm::mat4, glm::mat4> >::iterator jt = collidersOBB.begin(); jt != collidersOBB.end(); jt++) {
+				if (it != jt && testOBBOBB(std::get<0>(it->second), std::get<0>(jt->second))) {
+					std::cout << "Colision " << it->first << " with " << jt->first << std::endl;
 					isCollision = true;
+						if (isCollision) {
+							elemento = it->first;
+							numElemento = colisionesObjetos(elemento);
+							veggieCollider = true;
+							candyCollider = true;
+						}
 				}
 			}
 			addOrUpdateCollisionDetection(collisionDetection, it->first, isCollision);
 		}
 
-		for (std::map<std::string,
-			std::tuple<AbstractModel::SBB, glm::mat4, glm::mat4> >::iterator it =
-			collidersSBB.begin(); it != collidersSBB.end(); it++) {
+		for (std::map<std::string, std::tuple<AbstractModel::SBB, glm::mat4, glm::mat4> >::iterator it = collidersSBB.begin(); it != collidersSBB.end(); it++) {
 			bool isCollision = false;
-			for (std::map<std::string,
-				std::tuple<AbstractModel::SBB, glm::mat4, glm::mat4> >::iterator jt =
-				collidersSBB.begin(); jt != collidersSBB.end(); jt++) {
-				if (it != jt
-					&& testSphereSphereIntersection(std::get<0>(it->second),
-						std::get<0>(jt->second))) {
-					std::cout << "Colision " << it->first << " with "
-						<< jt->first << std::endl;
+			for (std::map<std::string, std::tuple<AbstractModel::SBB, glm::mat4, glm::mat4> >::iterator jt = collidersSBB.begin(); jt != collidersSBB.end(); jt++) {
+				if (it != jt && testSphereSphereIntersection(std::get<0>(it->second), std::get<0>(jt->second))) {
+					std::cout << "Colision " << it->first << " with " << jt->first << std::endl;
 					isCollision = true;
 				}
 			}
