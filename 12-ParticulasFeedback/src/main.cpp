@@ -1575,9 +1575,9 @@ void applicationLoop() {
 		glm::mat4 modelMatrixColliderFountain = glm::mat4(modelMatrixFountain);
 		//modelMatrixColliderFountain = glm::rotate(modelMatrixColliderFountain, glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
 		fountainCollider.u = glm::quat_cast(modelMatrixColliderFountain);
-		modelMatrixColliderFountain = glm::scale(modelMatrixColliderFountain, glm::vec3(4.9, 15.5, 4.9));
+		modelMatrixColliderFountain = glm::scale(modelMatrixColliderFountain, glm::vec3(4.9, 10.0, 4.9));
 		modelMatrixColliderFountain = glm::translate(modelMatrixFountain, modelFountain.getObb().c);
-		fountainCollider.e = modelFountain.getObb().e * glm::vec3(4.9, 15.5, 4.9);
+		fountainCollider.e = modelFountain.getObb().e * glm::vec3(4.9, 10.0, 4.9);
 		fountainCollider.c = modelMatrixColliderFountain[3];
 		addOrUpdateColliders(collidersOBB, "fountain", fountainCollider, modelMatrixFountain);
 
