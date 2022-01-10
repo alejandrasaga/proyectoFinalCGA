@@ -27,6 +27,9 @@
 #include "Headers/FirstPersonCamera.h"
 #include "Headers/ThirdPersonCamera.h"
 
+//Font rendering
+//#include "Headers/FontTypeRendering.h"
+
 //GLM include
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
@@ -113,6 +116,8 @@ Model modelFountain;
 // Model animate instance
 // Boy personaje principal
 Model boyModelAnimate;
+//Spook
+Model spookAnimate;
 
 //variables para la musica de fondo
 bool musicFondo = true;
@@ -126,6 +131,8 @@ GLuint textureCespedID;
 GLuint textureTerrainBackgroundID, textureTerrainRID, textureTerrainGID, textureTerrainBID, textureTerrainBlendMapID;
 GLuint textureParticleFountainID, textureParticleFireID, texId;
 GLuint skyboxTextureID;
+
+//FontTypeRendering::FontTypeRendering *modelText;
 
 GLenum types[6] = {
 GL_TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -149,6 +156,7 @@ int lastMousePosY, offsetY = 0;
 // Model matrix definitions
 glm::mat4 matrixModelRoca = glm::mat4(1.0);
 glm::mat4 modelMatrixBoy = glm::mat4(1.0f);
+glm::mat4 modelMatrixSpook = glm::mat4(1.0f);
 glm::mat4 modelMatrixFountain = glm::mat4(1.0f);
 glm::mat4 modelMatrixLolipop = glm::mat4(1.0f);
 glm::mat4 modelMatrixBomb = glm::mat4(1.0f);
@@ -236,6 +244,7 @@ double currTime, lastTime;
 //Variables para cuando se recogen dulces y vegetales
 bool candyCollider = false;
 bool veggieCollider = false;
+bool spookHelp = false;
 bool calaveritaAzucarCollider = false;
 std::string elemento;
 int numElemento = -1;
@@ -566,6 +575,10 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	boyModelAnimate.loadModel("../models/boy/boyAnimation.fbx");
 	boyModelAnimate.setShader(&shaderMulLighting);
 
+	//Boy
+	spookAnimate.loadModel("../models/spook/spook.fbx");
+	spookAnimate.setShader(&shaderMulLighting);
+
 	camera->setPosition(glm::vec3(0.0, 0.0, 10.0));
 	camera->setDistanceFromTarget(distanceFromTarget);
 	camera->setSensitivity(1.0);
@@ -854,6 +867,10 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	basis[2] = glm::normalize(n);
 	shaderParticlesFire.setMatrix3("EmitterBasis", 1, false, glm::value_ptr(basis));
 
+	//Se inicializa el model de texeles para dibujar texto
+	//modelText = new FontTypeRendering::FontTypeRendering(screenWidth, screenHeight);
+	//modelText->Initialize();
+
 	/*******************************************
 	 * Inicializacion de los buffers de la fuente
 	 *******************************************/
@@ -904,6 +921,7 @@ void destroy() {
 
 	// Custom objects animate
 	boyModelAnimate.destroy();
+	spookAnimate.destroy();
 
 	// Textures Delete
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -1077,6 +1095,9 @@ void applicationLoop() {
 
 	modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(11.32f, 0.05f, 51.96f));
 	modelMatrixBoy = glm::rotate(modelMatrixBoy, glm::radians(-90.0f), glm::vec3(0, 1, 0));
+
+	modelMatrixSpook = glm::translate(modelMatrixSpook, glm::vec3(2.54, 0.0, 64.45));
+	modelMatrixSpook = glm::rotate(modelMatrixSpook, glm::radians(246.7f), glm::vec3(0, 1, 0));
 
 	modelMatrixFountain = glm::translate(modelMatrixFountain, glm::vec3(5.0, 0.0, -40.0));
 	modelMatrixFountain[3][1] = terrain.getHeightTerrain(modelMatrixFountain[3][0], modelMatrixFountain[3][2]) + 0.2;
@@ -1430,6 +1451,10 @@ void applicationLoop() {
 		boyModelAnimate.setAnimationIndex(animationIndex);
 		boyModelAnimate.render(modelMatrixBodyBody);
 
+		glm::mat4 modelMatrixBodySpook = glm::mat4(modelMatrixSpook);
+		modelMatrixBodySpook = glm::scale(modelMatrixBodySpook, glm::vec3(0.015, 0.015, 0.015));
+		spookAnimate.render(modelMatrixBodySpook);
+
 		/*******************************************
 		 * Skybox
 		 *******************************************/
@@ -1774,6 +1799,20 @@ void applicationLoop() {
 		boyCollider.c = glm::vec3(modelmatrixColliderBoy[3]);
 		addOrUpdateColliders(collidersOBB, "Boy", boyCollider, modelMatrixBoy);
 
+		//Collider Spook
+		AbstractModel::OBB spookCollider;
+		glm::mat4 modelmatrixColliderSpook = glm::mat4(modelMatrixSpook);
+		modelmatrixColliderSpook = glm::rotate(modelmatrixColliderSpook,
+			glm::radians(-90.0f), glm::vec3(1, 0, 0));
+		// Set the orientation of collider before doing the scale
+		spookCollider.u = glm::quat_cast(modelmatrixColliderSpook);
+		modelmatrixColliderSpook = glm::scale(modelmatrixColliderSpook, glm::vec3(1.5, 1.5, 1.5));
+		modelmatrixColliderSpook = glm::translate(modelmatrixColliderSpook,
+		glm::vec3(spookAnimate.getObb().c.x, spookAnimate.getObb().c.y, spookAnimate.getObb().c.z));
+		spookCollider.e = spookAnimate.getObb().e * glm::vec3(1.5, 1.5, 1.5);
+		spookCollider.c = glm::vec3(modelmatrixColliderSpook[3]);
+		addOrUpdateColliders(collidersOBB, "Spook", spookCollider, modelMatrixSpook);
+
 		/*******************************************
 		 * Render de colliders
 		 *******************************************/
@@ -1832,6 +1871,7 @@ void applicationLoop() {
 							numElemento = colisionesObjetos(elemento);
 							veggieCollider = true;
 							candyCollider = true;
+							spookHelp = true;
 						}
 				}
 			}
@@ -1897,13 +1937,15 @@ void applicationLoop() {
 			}
 		}
 
-
-		// Constantes de animaciones
-		//animationIndex = 1;
-
 		/*******************************************
-		 * State machines
+		 * Textos
 		 *******************************************/
+		if (spookHelp == true) {
+			/*glEnable(GL_BLEND);
+			modelText->render("Presione ENTER para ayuda", -0.2, 0.8, 20, 1.0, 1.0, 0.0);
+			modelText->render("Un contador con text rendering", -0.5, -0.9, 30, 0.5, 0.3, 0.6);
+			glDisable(GL_BLEND);*/
+		}
 
 		glfwSwapBuffers(window);
 	}
