@@ -46,6 +46,12 @@
 // Include Colision headers functions
 #include "Headers/Colisiones.h"
 
+// Include musica de fondo
+#include "Headers/irrKlang.h"
+
+// OpenAL include
+#include <AL/alut.h>
+
 #define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
 
 int screenWidth;
@@ -106,8 +112,14 @@ Model modelMultipleGrass;
 // Fountain
 Model modelFountain;
 // Model animate instance
-// Boy personakje principal
+// Boy personaje principal
 Model boyModelAnimate;
+
+//variables para la musica de fondo
+bool musicFondo = true;
+
+using namespace irrklang;
+
 // Terrain model instance
 Terrain terrain(-1, -1, 200, 8, "../Textures/hmapP.png");
 
@@ -139,6 +151,9 @@ int lastMousePosY, offsetY = 0;
 glm::mat4 matrixModelRoca = glm::mat4(1.0);
 glm::mat4 modelMatrixBoy = glm::mat4(1.0f);
 glm::mat4 modelMatrixFountain = glm::mat4(1.0f);
+glm::mat4 modelMatrixLolipop = glm::mat4(1.0f);
+glm::mat4 modelMatrixBomb = glm::mat4(1.0f);
+glm::mat4 modelMatrixCandy = glm::mat4(1.0f);
 
 int animationIndex = 1;
 int modelSelected = 2;
@@ -173,9 +188,9 @@ std::vector<glm::vec3> roca2Position = { glm::vec3(-49.21,0.0, -84.37), glm::vec
 std::vector<float> roca2Orientation = { 3.0, 15.0, -87.0, 127.0, -120.0 };
 
 //Autumn tree position
-std::vector<glm::vec3> autumnPosition = {glm::vec3(-92.19, 0.0, -94.4), glm::vec3(3.12, 0.0, -95.1), glm::vec3(75.01, 0.0, 94.9), glm::vec3(-87.0, 0.0, -62.9), 
+std::vector<glm::vec3> autumnPosition = { glm::vec3(-92.19, 0.0, -94.4), glm::vec3(3.12, 0.0, -95.1), glm::vec3(75.01, 0.0, 94.9), glm::vec3(-87.0, 0.0, -62.9),
 						glm::vec3(-37.5, 0.0, -59.37), glm::vec3(12.2, 0.0, -51.07), glm::vec3(92.19, 0.0, 94.4), glm::vec3(-3.12, 0.0, 95.1), glm::vec3(-75.01, 0.0, -94.9),
-						glm::vec3(87.0, 0.0, 62.9), glm::vec3(37.5, 0.0, 59.37), glm::vec3(-12.2, 0.0, 51.07)};
+						glm::vec3(87.0, 0.0, 62.9), glm::vec3(37.5, 0.0, 59.37), glm::vec3(-12.2, 0.0, 51.07) };
 //Autumn tree orientation
 std::vector<float> autumnOrientation = { -12.0, 45.0, 30.0, -45.0, -25.0, 90.0, -12.0, -57.0, -35.0, -5.0, 25.0, 93.0 };
 
@@ -187,30 +202,31 @@ std::vector<float> arbFronOrientation = { -15.0, 45.0, 36.0, -45.0, -25.0, 70.0,
 
 //Dulces
 //Basic Candy
-std::vector<glm::vec3> basCandyPosition= {glm::vec3(-24.21, 5.5, 24.21),glm::vec3(-14.25, 5.5, 7.22), glm::vec3(-24.02, 5.5, -17.38), glm::vec3(-9.57, 5.5, -31.44)};
+std::vector<glm::vec3> basCandyPosition = { glm::vec3(-24.21, 5.5, 24.21),glm::vec3(-14.25, 5.5, 7.22), glm::vec3(-24.02, 5.5, -17.38), glm::vec3(-9.57, 5.5, -31.44) };
 std::vector<float> basCandyOrientation = { 30.0, 45.0, 60.0, 75.0 };
 
 //Color bomb
-std::vector<glm::vec3> colBombPosition = { glm::vec3(30.66, 0.9, -44.72), glm::vec3(59.37, 0.9, -48.43), glm::vec3(22.07, 0.9, 34.76), glm::vec3(41.8, 0.9, 37.9)};
+std::vector<glm::vec3> colBombPosition = { glm::vec3(30.66, 0.9, -44.72), glm::vec3(59.37, 0.9, -48.43), glm::vec3(22.07, 0.9, 34.76), glm::vec3(41.8, 0.9, 37.9) };
 std::vector<float> colBombOrientation = { 30.0, 45.0, 60.0, 75.0 };
 
 //Lolipop
 std::vector<glm::vec3> lolipopPosition = { glm::vec3(67.18, 0.0, 15.23), glm::vec3(76.95, 0.0, 47.65), glm::vec3(-12.5, 0.0, 5.86), glm::vec3(-27.93, 0.0, 61.13) };
-std::vector<float> lolipopOrientation = { 180, 180, -180, -180};
+std::vector<float> lolipopOrientation = { 180, 180, -180, -180 };
 
 //Radish RadishPosition
 std::vector<glm::vec3> RadishPosition = { glm::vec3(-13.28, 0.0, 31.83), glm::vec3(9.37, 0.0, 42.96), glm::vec3(-13.28, 0.0, 72.46), glm::vec3(-11.91, 0.0, -35.35),
-										glm::vec3(68.75, 0.0, 22.65)};
+										glm::vec3(68.75, 0.0, 22.65) };
 std::vector<float> RadishOrientation = { 180, -180, 180, -180, -180 };
 
 //Calaverita de Azucar 5
 std::vector<glm::vec3> calavPosition = { glm::vec3(-65.82, -0.5, -60.15), glm::vec3(57.03, -0.5, -67.18), glm::vec3(11.32, -0.5, 13.28), glm::vec3(-61.32, -0.5, -20.11),
-										glm::vec3(-60.54, -0.5, 46.48)};
-std::vector<float> calavOrientation = { 45.0, -45.0, 30.0, -30.0, 60.0};
+										glm::vec3(-60.54, -0.5, 46.48) };
+std::vector<float> calavOrientation = { 45.0, -45.0, 30.0, -30.0, 60.0 };
 
 //Casita
-std::vector<glm::vec3> casaPosition = { glm::vec3(23.57, 0.0, 47.64), glm::vec3(-42.57, 0.0, 39.45)};
+std::vector<glm::vec3> casaPosition = { glm::vec3(23.57, 0.0, 47.64), glm::vec3(-42.57, 0.0, 39.45) };
 std::vector<float> casaOrientation = { 233.55, 37.41 };
+
 // Blending model unsorted
 std::map<std::string, glm::vec3> blendingUnsorted = {
 		{"fountain", glm::vec3(5.0, 0.0, -40.0)},
@@ -219,6 +235,14 @@ std::map<std::string, glm::vec3> blendingUnsorted = {
 
 double deltaTime;
 double currTime, lastTime;
+
+//musica
+ISoundEngine* engine = createIrrKlangDevice();
+
+//if (!engine)
+	//return 0;
+
+ISound* ambiental = engine->play2D("Audio/song.mp3", true);
 
 // Jump variables
 bool isJump = false;
@@ -1160,33 +1184,33 @@ void applicationLoop() {
 		/*******************************************
 		 * Propiedades SpotLights
 		 *******************************************/
-		 glm::vec3 spotPosition = glm::vec3(0.32437, 0.226053, 1.79149);
-		 shaderMulLighting.setInt("spotLightCount", 1);
-		 shaderTerrain.setInt("spotLightCount", 1);
-		 shaderMulLighting.setVectorFloat3("spotLights[0].light.ambient", glm::value_ptr(glm::vec3(0.0, 0.0, 0.0)));
-		 shaderMulLighting.setVectorFloat3("spotLights[0].light.diffuse", glm::value_ptr(glm::vec3(0.2, 0.3, 0.2)));
-		 shaderMulLighting.setVectorFloat3("spotLights[0].light.specular", glm::value_ptr(glm::vec3(0.3, 0.3, 0.3)));
-		 shaderMulLighting.setVectorFloat3("spotLights[0].position", glm::value_ptr(spotPosition));
-		 shaderMulLighting.setVectorFloat3("spotLights[0].direction", glm::value_ptr(glm::vec3(0, -1, 0)));
-		 shaderMulLighting.setFloat("spotLights[0].constant", 1.0);
-		 shaderMulLighting.setFloat("spotLights[0].linear", 0.074);
-		 shaderMulLighting.setFloat("spotLights[0].quadratic", 0.03);
-		 shaderMulLighting.setFloat("spotLights[0].cutOff", cos(glm::radians(12.5f)));
-		 shaderMulLighting.setFloat("spotLights[0].outerCutOff", cos(glm::radians(15.0f)));
-		 shaderTerrain.setVectorFloat3("spotLights[0].light.ambient", glm::value_ptr(glm::vec3(0.0, 0.0, 0.0)));
-		 shaderTerrain.setVectorFloat3("spotLights[0].light.diffuse", glm::value_ptr(glm::vec3(0.2, 0.3, 0.2)));
-		 shaderTerrain.setVectorFloat3("spotLights[0].light.specular", glm::value_ptr(glm::vec3(0.3, 0.3, 0.3)));
-		 shaderTerrain.setVectorFloat3("spotLights[0].position", glm::value_ptr(spotPosition));
-		 shaderTerrain.setVectorFloat3("spotLights[0].direction", glm::value_ptr(glm::vec3(0, -1, 0)));
-		 shaderTerrain.setFloat("spotLights[0].constant", 1.0);
-		 shaderTerrain.setFloat("spotLights[0].linear", 0.074);
-		 shaderTerrain.setFloat("spotLights[0].quadratic", 0.03);
-		 shaderTerrain.setFloat("spotLights[0].cutOff", cos(glm::radians(12.5f)));
-		 shaderTerrain.setFloat("spotLights[0].outerCutOff", cos(glm::radians(15.0f)));
+		glm::vec3 spotPosition = glm::vec3(0.32437, 0.226053, 1.79149);
+		shaderMulLighting.setInt("spotLightCount", 1);
+		shaderTerrain.setInt("spotLightCount", 1);
+		shaderMulLighting.setVectorFloat3("spotLights[0].light.ambient", glm::value_ptr(glm::vec3(0.0, 0.0, 0.0)));
+		shaderMulLighting.setVectorFloat3("spotLights[0].light.diffuse", glm::value_ptr(glm::vec3(0.2, 0.3, 0.2)));
+		shaderMulLighting.setVectorFloat3("spotLights[0].light.specular", glm::value_ptr(glm::vec3(0.3, 0.3, 0.3)));
+		shaderMulLighting.setVectorFloat3("spotLights[0].position", glm::value_ptr(spotPosition));
+		shaderMulLighting.setVectorFloat3("spotLights[0].direction", glm::value_ptr(glm::vec3(0, -1, 0)));
+		shaderMulLighting.setFloat("spotLights[0].constant", 1.0);
+		shaderMulLighting.setFloat("spotLights[0].linear", 0.074);
+		shaderMulLighting.setFloat("spotLights[0].quadratic", 0.03);
+		shaderMulLighting.setFloat("spotLights[0].cutOff", cos(glm::radians(12.5f)));
+		shaderMulLighting.setFloat("spotLights[0].outerCutOff", cos(glm::radians(15.0f)));
+		shaderTerrain.setVectorFloat3("spotLights[0].light.ambient", glm::value_ptr(glm::vec3(0.0, 0.0, 0.0)));
+		shaderTerrain.setVectorFloat3("spotLights[0].light.diffuse", glm::value_ptr(glm::vec3(0.2, 0.3, 0.2)));
+		shaderTerrain.setVectorFloat3("spotLights[0].light.specular", glm::value_ptr(glm::vec3(0.3, 0.3, 0.3)));
+		shaderTerrain.setVectorFloat3("spotLights[0].position", glm::value_ptr(spotPosition));
+		shaderTerrain.setVectorFloat3("spotLights[0].direction", glm::value_ptr(glm::vec3(0, -1, 0)));
+		shaderTerrain.setFloat("spotLights[0].constant", 1.0);
+		shaderTerrain.setFloat("spotLights[0].linear", 0.074);
+		shaderTerrain.setFloat("spotLights[0].quadratic", 0.03);
+		shaderTerrain.setFloat("spotLights[0].cutOff", cos(glm::radians(12.5f)));
+		shaderTerrain.setFloat("spotLights[0].outerCutOff", cos(glm::radians(15.0f)));
 
-		 /*******************************************
-		  * Propiedades PointLights
-		  *******************************************/
+		/*******************************************
+		 * Propiedades PointLights
+		 *******************************************/
 		shaderMulLighting.setInt("pointLightCount", lamp1Position.size() + lamp2Orientation.size());
 		shaderTerrain.setInt("pointLightCount", lamp1Position.size() + lamp2Orientation.size());
 		for (int i = 0; i < lamp1Position.size(); i++) {
@@ -1319,7 +1343,7 @@ void applicationLoop() {
 			modelLolipop.setOrientation(glm::vec3(0, lolipopOrientation[i], 0));
 			modelLolipop.render();
 		}
-		
+
 		//Radish render
 		for (int i = 0; i < RadishPosition.size(); i++) {
 			lolipopPosition[i].y = terrain.getHeightTerrain(RadishPosition[i].x, RadishPosition[i].z);
@@ -1337,7 +1361,6 @@ void applicationLoop() {
 			modelCalaverita.setOrientation(glm::vec3(0, calavOrientation[i], 0));
 			modelCalaverita.render();
 		}
-
 		//Casa render
 		for (int i = 0; i < casaPosition.size(); i++) {
 			lolipopPosition[i].y = terrain.getHeightTerrain(casaPosition[i].x, casaPosition[i].z);
@@ -1606,7 +1629,7 @@ void applicationLoop() {
 			AbstractModel::OBB RadishCollider;
 			glm::mat4 modelMatrixColliderRadish = glm::mat4(1.0);
 			modelMatrixColliderRadish = glm::translate(modelMatrixColliderRadish, glm::vec3(RadishPosition[i].x, 0.5, RadishPosition[i].z));
-			modelMatrixColliderRadish = glm::rotate(modelMatrixColliderRadish, glm::radians(RadishOrientation[i]),
+			modelMatrixColliderRadish = glm::rotate(modelMatrixColliderRadish, glm::radians(lolipopOrientation[i]),
 				glm::vec3(0, 1, 0));
 			addOrUpdateColliders(collidersOBB, "Radish no. -" + std::to_string(i), RadishCollider, modelMatrixColliderRadish);
 			// Set the orientation of collider before doing the scale
@@ -1628,7 +1651,6 @@ void applicationLoop() {
 			calaveritaCollider.ratio = modelCalaverita.getSbb().ratio * 0.03;
 			addOrUpdateColliders(collidersSBB, "Calaverita no. - " + std::to_string(i), calaveritaCollider, modelMatrixColliderCalaverita);
 		}
-
 		//Casa colliders
 		for (int i = 0; i < casaPosition.size(); i++) {
 			AbstractModel::OBB casaCollider;
