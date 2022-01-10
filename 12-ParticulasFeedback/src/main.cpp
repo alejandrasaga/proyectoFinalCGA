@@ -164,7 +164,7 @@ std::vector<glm::vec3> pastoMultiplePosition = { glm::vec3(-7.5, 0.0, -50.5), gl
 std::vector<float> pastoMultipleOrientation = { 25.0, 45.0, 0.0, -90.0, -12.0 };
 
 //Roca 2 position
-std::vector<glm::vec3> roca2Position = { glm::vec3(-49.21,0.0, -84.37), glm::vec3(54.5, 0.0, -67.38), glm::vec3(48.82, 0.0, -9.76),
+std::vector<glm::vec3> roca2Position = { glm::vec3(-49.21,0.0, -84.37), glm::vec3(35.5, 0.0, -6.38), glm::vec3(48.82, 0.0, -9.76),
 										glm::vec3(55.66, 0.0, 82.03), glm::vec3(65.23, 0.0, -25.59) };
 //Roca 2 orientation
 std::vector<float> roca2Orientation = { 3.0, 15.0, -87.0, 127.0, -120.0 };
@@ -1607,7 +1607,7 @@ void applicationLoop() {
 			modelMatrixColliderCalaverita = glm::rotate(modelMatrixColliderCalaverita, glm::radians(calavOrientation[i]),
 				glm::vec3(0, 1, 0));
 			calaveritaCollider.c = glm::vec3(modelMatrixColliderCalaverita[3]);
-			calaveritaCollider.ratio = modelCalaverita.getSbb().ratio * 0.02;
+			calaveritaCollider.ratio = modelCalaverita.getSbb().ratio * 0.03;
 			addOrUpdateColliders(collidersSBB, "Calaverita no. - " + std::to_string(i), calaveritaCollider, modelMatrixColliderCalaverita);
 		}
 
