@@ -238,10 +238,6 @@ bool candyCollider = false;
 bool veggieCollider = false;
 std::string elemento;
 int numElemento = -1;
-std::vector<glm::vec3> basCandyPosCollider = basCandyPosition;
-std::vector<glm::vec3> colBombPosCollider = colBombPosition;
-std::vector<glm::vec3> lolipopPosCollider = lolipopPosition;
-std::vector<glm::vec3> radishPosCollider = RadishPosition;
 
 //musica
 ISoundEngine* engine = createIrrKlangDevice();
@@ -1307,7 +1303,13 @@ void applicationLoop() {
 		//Basic Candy
 		for (int i = 0; i < basCandyPosition.size(); i++) {
 			basCandyPosition[i].y = terrain.getHeightTerrain(basCandyPosition[i].x, basCandyPosition[i].z);
-			modelBasicCandy.setPosition(glm::vec3(basCandyPosition[i].x, 1.2, basCandyPosition[i].z));
+			if (candyCollider == true && i == numElemento) {
+				modelBasicCandy.setPosition(glm::vec3(basCandyPosition[i].x, 5.2, basCandyPosition[i].z));
+			}
+			else {
+				modelBasicCandy.setPosition(glm::vec3(basCandyPosition[i].x, 1.2, basCandyPosition[i].z));
+			}
+			
 			modelBasicCandy.setScale(glm::vec3(0.0015, 0.0015, 0.0015));
 			modelBasicCandy.setOrientation(glm::vec3(basCandyOrientation[i], 0, 0));
 			modelBasicCandy.render();
@@ -1579,7 +1581,13 @@ void applicationLoop() {
 		for (int i = 0; i < basCandyPosition.size(); i++) {
 			AbstractModel::SBB basCandyCollider;
 			glm::mat4 modelMatrixColliderBasCandy = glm::mat4(1.0);
-			modelMatrixColliderBasCandy = glm::translate(modelMatrixColliderBasCandy, glm::vec3(basCandyPosition[i].x, 1.2, basCandyPosition[i].z));
+			if (candyCollider == true && i == numElemento) {
+				modelMatrixColliderBasCandy = glm::translate(modelMatrixColliderBasCandy, glm::vec3(basCandyPosition[i].x, -6.2, basCandyPosition[i].z));
+			}
+			else {
+				modelMatrixColliderBasCandy = glm::translate(modelMatrixColliderBasCandy, glm::vec3(basCandyPosition[i].x, 1.2, basCandyPosition[i].z));
+			}
+			
 			modelMatrixColliderBasCandy = glm::rotate(modelMatrixColliderBasCandy, glm::radians(basCandyOrientation[i]),
 				glm::vec3(0, 1, 0));
 			basCandyCollider.c = glm::vec3(modelMatrixColliderBasCandy[3]);
