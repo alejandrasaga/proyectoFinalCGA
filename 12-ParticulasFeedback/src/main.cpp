@@ -94,6 +94,9 @@ Model modelRadish;
 //Calaverita
 Model modelCalaverita;
 
+//Modelo de la casita
+Model modelCasa;
+
 // Lamps
 Model modelLamp1;
 Model modelLamp2;
@@ -205,6 +208,9 @@ std::vector<glm::vec3> calavPosition = { glm::vec3(-65.82, -0.5, -60.15), glm::v
 										glm::vec3(-60.54, -0.5, 46.48)};
 std::vector<float> calavOrientation = { 45.0, -45.0, 30.0, -30.0, 60.0};
 
+//Casita
+std::vector<glm::vec3> casaPosition = { glm::vec3(23.57, 0.0, 47.64), glm::vec3(-42.57, 0.0, 39.45)};
+std::vector<float> casaOrientation = { 233.55, 37.41 };
 // Blending model unsorted
 std::map<std::string, glm::vec3> blendingUnsorted = {
 		{"fountain", glm::vec3(5.0, 0.0, -40.0)},
@@ -500,6 +506,9 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 
 	modelCalaverita.loadModel("../models/calaveritaAzucar/calaveritaAzucar.obj");
 	modelCalaverita.setShader(&shaderMulLighting);
+
+	modelCasa.loadModel("../models/casaMedieval/casaMed.obj");
+	modelCasa.setShader(&shaderMulLighting);
 
 	terrain.init();
 	terrain.setShader(&shaderTerrain);
@@ -862,6 +871,7 @@ void destroy() {
 	modelLolipop.destroy();
 	modelRadish.destroy();
 	modelCalaverita.destroy();
+	modelCasa.destroy();
 	modelAutumnTree.destroy();
 	modelArbolFrondoso.destroy();
 	modelLamp1.destroy();
@@ -1328,6 +1338,14 @@ void applicationLoop() {
 			modelCalaverita.render();
 		}
 
+		//Casa render
+		for (int i = 0; i < casaPosition.size(); i++) {
+			lolipopPosition[i].y = terrain.getHeightTerrain(casaPosition[i].x, casaPosition[i].z);
+			modelCasa.setPosition(casaPosition[i]);
+			modelCasa.setScale(glm::vec3(2500, 2500, 2500));
+			modelCasa.setOrientation(glm::vec3(0, casaOrientation[i], 0));
+			modelCasa.render();
+		}
 
 		// Render the lamps
 		for (int i = 0; i < lamp1Position.size(); i++) {
@@ -1588,7 +1606,7 @@ void applicationLoop() {
 			AbstractModel::OBB RadishCollider;
 			glm::mat4 modelMatrixColliderRadish = glm::mat4(1.0);
 			modelMatrixColliderRadish = glm::translate(modelMatrixColliderRadish, glm::vec3(RadishPosition[i].x, 0.5, RadishPosition[i].z));
-			modelMatrixColliderRadish = glm::rotate(modelMatrixColliderRadish, glm::radians(lolipopOrientation[i]),
+			modelMatrixColliderRadish = glm::rotate(modelMatrixColliderRadish, glm::radians(RadishOrientation[i]),
 				glm::vec3(0, 1, 0));
 			addOrUpdateColliders(collidersOBB, "Radish no. -" + std::to_string(i), RadishCollider, modelMatrixColliderRadish);
 			// Set the orientation of collider before doing the scale
@@ -1609,6 +1627,23 @@ void applicationLoop() {
 			calaveritaCollider.c = glm::vec3(modelMatrixColliderCalaverita[3]);
 			calaveritaCollider.ratio = modelCalaverita.getSbb().ratio * 0.03;
 			addOrUpdateColliders(collidersSBB, "Calaverita no. - " + std::to_string(i), calaveritaCollider, modelMatrixColliderCalaverita);
+		}
+
+		//Casa colliders
+		for (int i = 0; i < casaPosition.size(); i++) {
+			AbstractModel::OBB casaCollider;
+			glm::mat4 modelMatrixCollidercasa = glm::mat4(1.0);
+			modelMatrixCollidercasa = glm::translate(modelMatrixCollidercasa, casaPosition[i]);
+			modelMatrixCollidercasa = glm::rotate(modelMatrixCollidercasa, glm::radians(casaOrientation[i]),
+				glm::vec3(0, 1, 0));
+			addOrUpdateColliders(collidersOBB, "casa no. -" + std::to_string(i), casaCollider, modelMatrixCollidercasa);
+			// Set the orientation of collider before doing the scale
+			casaCollider.u = glm::quat_cast(modelMatrixCollidercasa);
+			modelMatrixCollidercasa = glm::scale(modelMatrixCollidercasa, glm::vec3(2500, 2500, 2500));
+			modelMatrixCollidercasa = glm::translate(modelMatrixCollidercasa, modelCasa.getObb().c);
+			casaCollider.c = glm::vec3(modelMatrixCollidercasa[3]);
+			casaCollider.e = modelCasa.getObb().e * glm::vec3(2300, 2300, 2300);
+			std::get<0>(collidersOBB.find("casa no. -" + std::to_string(i))->second) = casaCollider;
 		}
 
 		// Lamps1 colliders
