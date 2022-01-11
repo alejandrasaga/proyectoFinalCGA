@@ -248,7 +248,7 @@ double seg, min;
 bool candyCollider = false;
 bool veggieCollider = false;
 bool spookHelp = false;
-bool enterPress = false;
+bool teclaAvanza = false;
 bool calaveritaAzucarCollider = false;
 std::string elemento;
 int numElemento = -1;
@@ -1060,21 +1060,22 @@ bool processInput(bool continueApplication) {
 	if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
 		modelMatrixBoy = glm::rotate(modelMatrixBoy, glm::radians(2.0f), glm::vec3(0, 1, 0));
 		boyModelAnimate.setAnimationIndex(animationIndex);
+		teclaAvanza = true;
 	}
 	else if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
 		modelMatrixBoy = glm::rotate(modelMatrixBoy, glm::radians(-2.0f), glm::vec3(0, 1, 0));
 		boyModelAnimate.setAnimationIndex(animationIndex);
+		teclaAvanza = true;
 	}if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-		modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, 0.02));
+		modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, 0.4));
 		boyModelAnimate.setAnimationIndex(animationIndex);
+		teclaAvanza = true;
 	}
 	else if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, -0.02));
+		modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, -0.4));
 		boyModelAnimate.setAnimationIndex(animationIndex);
+		teclaAvanza = true;
 	} 
-	else if ((modelSelected == 2 && glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)) {
-		enterPress = true;
-	}
 
 	bool keySpaceStatus = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
 	if (!isJump && keySpaceStatus) {
@@ -1094,6 +1095,27 @@ int colisionesObjetos(std::string tipoElemento) {
 	int num = numC - 48;
 	std::cout << "Numero " << num << std::endl;
 	return num;
+}
+
+int cuentaCalav(int numero, std::string tipoElemento) {
+	if (tipoElemento.find("Calaverita") != std::string::npos)
+		if (numero < 6)
+			countCalav++;
+	return countCalav;
+}
+
+int cuentaDulces(int numero, std::string tipoElemento) {
+	if (numero < 5) {
+		if (tipoElemento.find("Radish") != std::string::npos)
+			countCandy--;
+		else if (tipoElemento.find("Lolipop") != std::string::npos)
+			countCandy++;
+		else if (tipoElemento.find("ColorBomb") != std::string::npos)
+			countCandy++;
+		else if (tipoElemento.find("BasicCandy") != std::string::npos)
+			countCandy++;
+	}
+	return countCandy;
 }
 
 void applicationLoop() {
@@ -1341,10 +1363,7 @@ void applicationLoop() {
 		for (int i = 0; i < basCandyPosition.size(); i++) {
 			basCandyPosition[i].y = terrain.getHeightTerrain(basCandyPosition[i].x, basCandyPosition[i].z);
 			if (candyCollider == true && i == numElemento) {
-				modelBasicCandy.setPosition(glm::vec3(basCandyPosition[i].x, 5.2, basCandyPosition[i].z));
-				countCandy++;
-				velocidad += 0.01;
-				candyCollider = false;
+				modelBasicCandy.setPosition(glm::vec3(basCandyPosition[i].x, -5.2, basCandyPosition[i].z));
 			}
 			else {
 				modelBasicCandy.setPosition(glm::vec3(basCandyPosition[i].x, 1.2, basCandyPosition[i].z));
@@ -1360,9 +1379,6 @@ void applicationLoop() {
 			colBombPosition[i].y = terrain.getHeightTerrain(colBombPosition[i].x, colBombPosition[i].z);
 			if (candyCollider == true && i == numElemento) {
 				modelColorBomb.setPosition(glm::vec3(colBombPosition[i].x, -5.9, colBombPosition[i].z));
-				countCandy++;
-				velocidad += 0.01;
-				candyCollider = false;
 			}
 			else {
 				modelColorBomb.setPosition(glm::vec3(colBombPosition[i].x, 0.9, colBombPosition[i].z));
@@ -1377,9 +1393,6 @@ void applicationLoop() {
 			lolipopPosition[i].y = terrain.getHeightTerrain(lolipopPosition[i].x, lolipopPosition[i].z);
 			if (candyCollider == true && i == numElemento) {
 				modelLolipop.setPosition(glm::vec3(lolipopPosition[i].x, -5.5, lolipopPosition[i].z));
-				countCandy++;
-				velocidad += 0.01;
-				candyCollider = false;
 			}
 			else {
 				modelLolipop.setPosition(glm::vec3(lolipopPosition[i].x, 0.5, lolipopPosition[i].z));
@@ -1394,9 +1407,6 @@ void applicationLoop() {
 			RadishPosition[i].y = terrain.getHeightTerrain(RadishPosition[i].x, RadishPosition[i].z);
 			if (veggieCollider == true && i == numElemento) {
 				modelRadish.setPosition(glm::vec3(RadishPosition[i].x, -5.5, RadishPosition[i].z));
-				countCalav++;
-				velocidad -= 0.01;
-				veggieCollider = false;
 			}
 			else {
 				modelRadish.setPosition(glm::vec3(RadishPosition[i].x, 0.5, RadishPosition[i].z));
@@ -1406,18 +1416,25 @@ void applicationLoop() {
 			modelRadish.render();
 		}
 		/*************CUENTA DE DULCES ***********/
-		if ((countCandy >= 0) && (countCandy < 5))
-			animationIndex = 1;
-		if ((countCandy >= 5) && (countCandy < 9))
-			animationIndex = 2;
-		if ((countCandy >= 9) && (countCandy < 13))
-			animationIndex = 3;
+		if (teclaAvanza) {
+			if ((countCandy >= 0) && (countCandy < 5))
+				animationIndex = 1;
+			if ((countCandy >= 5) && (countCandy < 9))
+				animationIndex = 2;
+			if ((countCandy >= 9) && (countCandy < 13))
+				animationIndex = 3;
+			if (countCalav == 5)
+				animationIndex = 7;
+		}
+		else
+			animationIndex = 0;
+
 
 		//Calaverita render
 		for (int i = 0; i < calavPosition.size(); i++) {
 			calavPosition[i].y = terrain.getHeightTerrain(calavPosition[i].x, RadishPosition[i].z);
 			if (calaveritaAzucarCollider == true && i == numElemento) {
-			modelCalaverita.setPosition(glm::vec3(calavPosition[i].x, 5.4, calavPosition[i].z));
+			modelCalaverita.setPosition(glm::vec3(calavPosition[i].x, -5.4, calavPosition[i].z));
 			} else {
 				modelCalaverita.setPosition(glm::vec3(calavPosition[i].x, 0.4, calavPosition[i].z));
 			}
@@ -1478,13 +1495,17 @@ void applicationLoop() {
 		tmv = currTime - startTimeJump;
 		if (modelMatrixBoy[3][1] < terrain.getHeightTerrain(modelMatrixBoy[3][0], modelMatrixBoy[3][2])) {
 			isJump = false;
+			teclaAvanza = false;
 			modelMatrixBoy[3][1] = terrain.getHeightTerrain(modelMatrixBoy[3][0], modelMatrixBoy[3][2]);
+	
 		}
-		
+		if (isJump && !teclaAvanza)
+			animationIndex = 5;
+
 		glm::mat4 modelMatrixBodyBody = glm::mat4(modelMatrixBoy);
 		modelMatrixBodyBody = glm::scale(modelMatrixBodyBody, glm::vec3(0.005, 0.005, 0.005));
 		boyModelAnimate.render(modelMatrixBodyBody);
-		boyModelAnimate.setAnimationIndex(0);
+		boyModelAnimate.setAnimationIndex(animationIndex);
 
 		glm::mat4 modelMatrixBodySpook = glm::mat4(modelMatrixSpook);
 		modelMatrixBodySpook = glm::scale(modelMatrixBodySpook, glm::vec3(0.015, 0.015, 0.015));
@@ -1716,7 +1737,7 @@ void applicationLoop() {
 			AbstractModel::OBB RadishCollider;
 			glm::mat4 modelMatrixColliderRadish = glm::mat4(1.0);
 			if (veggieCollider == true && i == numElemento) {
-				modelMatrixColliderRadish = glm::translate(modelMatrixColliderRadish, glm::vec3(RadishPosition[i].x, -5.5, RadishPosition[i].z));
+				modelMatrixColliderRadish = glm::translate(modelMatrixColliderRadish, glm::vec3(RadishPosition[i].x, -5.5, RadishPosition[i].z));;
 			}
 			else {
 				modelMatrixColliderRadish = glm::translate(modelMatrixColliderRadish, glm::vec3(RadishPosition[i].x, 0.5, RadishPosition[i].z));
@@ -1825,12 +1846,12 @@ void applicationLoop() {
 			glm::radians(-90.0f), glm::vec3(1, 0, 0));
 		// Set the orientation of collider before doing the scale
 		boyCollider.u = glm::quat_cast(modelmatrixColliderBoy);
-		modelmatrixColliderBoy = glm::scale(modelmatrixColliderBoy, glm::vec3(0.4, 0.5, 0.5));
+		modelmatrixColliderBoy = glm::scale(modelmatrixColliderBoy, glm::vec3(0.4, 0.3, 0.5));
 		modelmatrixColliderBoy = glm::translate(modelmatrixColliderBoy,
 			glm::vec3(boyModelAnimate.getObb().c.x,
 				boyModelAnimate.getObb().c.y,
 				boyModelAnimate.getObb().c.z));
-		boyCollider.e = boyModelAnimate.getObb().e * glm::vec3(0.4, 0.5, 0.5);
+		boyCollider.e = boyModelAnimate.getObb().e * glm::vec3(0.4, 0.3, 0.5);
 		boyCollider.c = glm::vec3(modelmatrixColliderBoy[3]);
 		addOrUpdateColliders(collidersOBB, "Boy", boyCollider, modelMatrixBoy);
 
@@ -1904,6 +1925,8 @@ void applicationLoop() {
 						if (isCollision) {
 							elemento = it->first;
 							numElemento = colisionesObjetos(elemento);
+							countCalav = cuentaCalav(numElemento, elemento);
+							countCandy = cuentaDulces(numElemento, elemento);
 							veggieCollider = true;
 							candyCollider = true;
 							spookHelp = true;
@@ -1936,6 +1959,8 @@ void applicationLoop() {
 						if (isCollision) {
 							elemento = it->first;
 							numElemento = colisionesObjetos(elemento);
+							countCalav = cuentaCalav(numElemento, elemento);
+							countCandy = cuentaDulces(numElemento, elemento);
 							candyCollider = true;
 							calaveritaAzucarCollider = true;
 						}
@@ -2002,7 +2027,7 @@ void applicationLoop() {
 				-0.9, -0.9, 20, 1.0, 0.6, 0.2);
 			glDisable(GL_BLEND);
 		}
-		std::string infoCalav = "Calaveras: " + std::to_string(countCalav)+"/6";
+		std::string infoCalav = "Calaveras: " + std::to_string(countCalav)+"/5";
 		modelText->render(infoCalav, -1.0, -1.0005, 20, 1.0, 0.0, 0.0);
 
 		std::string infoCandy = "Dulces: " + std::to_string(countCandy);
