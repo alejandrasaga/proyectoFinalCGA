@@ -1,7 +1,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
-#include<thread>
-#include<chrono>
+#include <string>
+#include <sstream>
 //glew include
 #include <GL/glew.h>
 
@@ -242,6 +242,7 @@ std::map<std::string, glm::vec3> blendingUnsorted = {
 
 double deltaTime;
 double currTime, lastTime;
+double seg, min;
 
 //Variables para cuando se recogen dulces y vegetales
 bool candyCollider = false;
@@ -251,6 +252,10 @@ bool enterPress = false;
 bool calaveritaAzucarCollider = false;
 std::string elemento;
 int numElemento = -1;
+
+//contador para calaveras y dulces
+int countCalav = 0, countCandy = 0;
+float velocidad = 0.02;
 
 //musica
 ISoundEngine* engine = createIrrKlangDevice();
@@ -1053,19 +1058,19 @@ bool processInput(bool continueApplication) {
 		availableSave = true;
 
 	if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-		modelMatrixBoy = glm::rotate(modelMatrixBoy, glm::radians(5.0f), glm::vec3(0, 1, 0));
-		boyModelAnimate.setAnimationIndex(1);
+		modelMatrixBoy = glm::rotate(modelMatrixBoy, glm::radians(2.0f), glm::vec3(0, 1, 0));
+		boyModelAnimate.setAnimationIndex(animationIndex);
 	}
 	else if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-		modelMatrixBoy = glm::rotate(modelMatrixBoy, glm::radians(-5.0f), glm::vec3(0, 1, 0));
-		boyModelAnimate.setAnimationIndex(1);
+		modelMatrixBoy = glm::rotate(modelMatrixBoy, glm::radians(-2.0f), glm::vec3(0, 1, 0));
+		boyModelAnimate.setAnimationIndex(animationIndex);
 	}if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-		modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, 0.5));
-		boyModelAnimate.setAnimationIndex(1);
+		modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, 0.02));
+		boyModelAnimate.setAnimationIndex(animationIndex);
 	}
 	else if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, -0.5));
-		boyModelAnimate.setAnimationIndex(1);
+		modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, -0.02));
+		boyModelAnimate.setAnimationIndex(animationIndex);
 	} 
 	else if ((modelSelected == 2 && glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)) {
 		enterPress = true;
@@ -1337,6 +1342,9 @@ void applicationLoop() {
 			basCandyPosition[i].y = terrain.getHeightTerrain(basCandyPosition[i].x, basCandyPosition[i].z);
 			if (candyCollider == true && i == numElemento) {
 				modelBasicCandy.setPosition(glm::vec3(basCandyPosition[i].x, 5.2, basCandyPosition[i].z));
+				countCandy++;
+				velocidad += 0.01;
+				candyCollider = false;
 			}
 			else {
 				modelBasicCandy.setPosition(glm::vec3(basCandyPosition[i].x, 1.2, basCandyPosition[i].z));
@@ -1352,6 +1360,9 @@ void applicationLoop() {
 			colBombPosition[i].y = terrain.getHeightTerrain(colBombPosition[i].x, colBombPosition[i].z);
 			if (candyCollider == true && i == numElemento) {
 				modelColorBomb.setPosition(glm::vec3(colBombPosition[i].x, -5.9, colBombPosition[i].z));
+				countCandy++;
+				velocidad += 0.01;
+				candyCollider = false;
 			}
 			else {
 				modelColorBomb.setPosition(glm::vec3(colBombPosition[i].x, 0.9, colBombPosition[i].z));
@@ -1366,6 +1377,9 @@ void applicationLoop() {
 			lolipopPosition[i].y = terrain.getHeightTerrain(lolipopPosition[i].x, lolipopPosition[i].z);
 			if (candyCollider == true && i == numElemento) {
 				modelLolipop.setPosition(glm::vec3(lolipopPosition[i].x, -5.5, lolipopPosition[i].z));
+				countCandy++;
+				velocidad += 0.01;
+				candyCollider = false;
 			}
 			else {
 				modelLolipop.setPosition(glm::vec3(lolipopPosition[i].x, 0.5, lolipopPosition[i].z));
@@ -1380,6 +1394,9 @@ void applicationLoop() {
 			RadishPosition[i].y = terrain.getHeightTerrain(RadishPosition[i].x, RadishPosition[i].z);
 			if (veggieCollider == true && i == numElemento) {
 				modelRadish.setPosition(glm::vec3(RadishPosition[i].x, -5.5, RadishPosition[i].z));
+				countCalav++;
+				velocidad -= 0.01;
+				veggieCollider = false;
 			}
 			else {
 				modelRadish.setPosition(glm::vec3(RadishPosition[i].x, 0.5, RadishPosition[i].z));
@@ -1388,6 +1405,13 @@ void applicationLoop() {
 			modelRadish.setOrientation(glm::vec3(0, RadishOrientation[i], 0));
 			modelRadish.render();
 		}
+		/*************CUENTA DE DULCES ***********/
+		if ((countCandy >= 0) && (countCandy < 5))
+			animationIndex = 1;
+		if ((countCandy >= 5) && (countCandy < 9))
+			animationIndex = 2;
+		if ((countCandy >= 9) && (countCandy < 13))
+			animationIndex = 3;
 
 		//Calaverita render
 		for (int i = 0; i < calavPosition.size(); i++) {
@@ -1953,7 +1977,6 @@ void applicationLoop() {
 		int minutos = 0, segundos = 0;
 		std::string tiempoLeft = minutos + ":" + segundos;
 			segundos++;
-			Sleep(100);
 
 			if (segundos > 59) {
 				minutos++;
@@ -1979,6 +2002,11 @@ void applicationLoop() {
 				-0.9, -0.9, 20, 1.0, 0.6, 0.2);
 			glDisable(GL_BLEND);
 		}
+		std::string infoCalav = "Calaveras: " + std::to_string(countCalav)+"/6";
+		modelText->render(infoCalav, -1.0, -1.0005, 20, 1.0, 0.0, 0.0);
+
+		std::string infoCandy = "Dulces: " + std::to_string(countCandy);
+		modelText->render(infoCandy, -1.0, -0.9, 20, 1.0, 0.0, 0.0);
 		
 
 		glfwSwapBuffers(window);
