@@ -77,6 +77,7 @@ Shader shaderParticlesFountain;
 Shader shaderParticlesFire;
 
 std::shared_ptr<Camera> camera(new ThirdPersonCamera());
+std::shared_ptr<FirstPersonCamera> camera2(new FirstPersonCamera());//Camara en 1ra persona
 float distanceFromTarget = 7.0;
 
 Sphere skyboxSphere(20, 20);
@@ -456,6 +457,9 @@ void initParticleBuffersFire() {
 	glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
 }
 
+int numCam = 0; //para saber que tipo de camara, 0 para camara3ra persona y 1 para camara1ra
+bool vista = false;//para cuando suelte la tecla se mantenga el tipo de camara
+
 // Implementacion de todas las funciones.
 void init(int width, int height, std::string strTitle, bool bFullScreen) {
 
@@ -590,6 +594,8 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	camera->setPosition(glm::vec3(0.0, 0.0, 10.0));
 	camera->setDistanceFromTarget(distanceFromTarget);
 	camera->setSensitivity(1.0);
+
+	camera2->setPosition(glm::vec3(0.0, 5.0, -10.0));
 
 	// Definimos el tamanio de la imagen
 	int imageWidth, imageHeight;
@@ -1015,6 +1021,18 @@ bool processInput(bool continueApplication) {
 	if (exitApp || glfwWindowShouldClose(window) != 0) {
 		return false;
 	}
+	/*Controles de la camara en 1ra persona*/
+	if (numCam == 1 && glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		camera2->moveFrontCamera(true, deltaTime);
+	if (numCam == 1 && glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		camera2->moveFrontCamera(false, deltaTime);
+	if (numCam == 1 && glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		camera2->moveRightCamera(false, deltaTime);
+	if (numCam == 1 && glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		camera2->moveRightCamera(true, deltaTime);
+	if (numCam == 1 && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+		camera2->mouseMoveCamera(offsetX, offsetY, deltaTime);
+
 	/*********** CONTROL CONSOLA******************/
 	if (glfwJoystickPresent(GLFW_JOYSTICK_1) == GL_TRUE) {
 		//std::cout << "Esta presente el joystick" << std::endl;
@@ -1124,6 +1142,21 @@ bool processInput(bool continueApplication) {
 		tmv = 0;
 	}
 
+	//Agregamos el cambio de camaras
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
+		std::cout << "Se presiono la K" << std::endl;
+		vista = false;
+		if (numCam == 1) {
+			numCam = 0;
+		}
+		else if (numCam == 0) {
+			numCam = 1;
+		}
+	}
+	else if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_K) == GLFW_RELEASE) {
+		vista = true;
+	}
+
 	glfwPollEvents();
 	return continueApplication;
 }
@@ -1227,7 +1260,11 @@ void applicationLoop() {
 		camera->setCameraTarget(target);
 		camera->setAngleTarget(angleTarget);
 		camera->updateCamera();
-		view = camera->getViewMatrix();
+		
+		if (numCam == 1)
+			view = camera2->getViewMatrix();
+		else
+			view = camera->getViewMatrix();
 
 		// Settea la matriz de vista y projection al shader con solo color
 		shader.setMatrix4("projection", 1, false, glm::value_ptr(projection));
