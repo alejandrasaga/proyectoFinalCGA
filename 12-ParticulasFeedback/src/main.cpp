@@ -1,5 +1,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
+#include<thread>
+#include<chrono>
 //glew include
 #include <GL/glew.h>
 
@@ -132,7 +134,7 @@ GLuint textureTerrainBackgroundID, textureTerrainRID, textureTerrainGID, texture
 GLuint textureParticleFountainID, textureParticleFireID, texId;
 GLuint skyboxTextureID;
 
-FontTypeRendering::FontTypeRendering *modelText;
+FontTypeRendering::FontTypeRendering *modelText, *modelTimer;
 
 GLenum types[6] = {
 GL_TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -871,7 +873,8 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	//Se inicializa el model de texeles para dibujar texto
 	modelText = new FontTypeRendering::FontTypeRendering(screenWidth, screenHeight);
 	modelText->Initialize();
-
+	modelTimer = new FontTypeRendering::FontTypeRendering(screenWidth, screenHeight);
+	modelTimer->Initialize();
 	/*******************************************
 	 * Inicializacion de los buffers de la fuente
 	 *******************************************/
@@ -1078,6 +1081,7 @@ bool processInput(bool continueApplication) {
 	glfwPollEvents();
 	return continueApplication;
 }
+
 
 int colisionesObjetos(std::string tipoElemento) {
 	tipoElemento = elemento;
@@ -1943,6 +1947,25 @@ void applicationLoop() {
 				}
 			}
 		}
+		/**********************************
+		**	TIMER
+		**********************************/
+		int minutos = 0, segundos = 0;
+		std::string tiempoLeft = minutos + ":" + segundos;
+			segundos++;
+			Sleep(100);
+
+			if (segundos > 59) {
+				minutos++;
+				segundos = 0;
+
+			}
+			if (minutos > 10) {
+				minutos = 0;
+			}
+			modelTimer->render(tiempoLeft, -0.7, 0.8, 20, 1.0, 0.0, 0.0);
+
+
 		/*******************************************
 		 * Textos
 		 *******************************************/
