@@ -1047,7 +1047,7 @@ bool processInput(bool continueApplication) {
 		std::cout << "Right Trigger L2: " << axes[5] << std::endl;*/
 
 		if (fabs(axes[1] > 0.2)) {
-			modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, axes[1] * 0.1));
+			modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, axes[1] * velocidad));
 			boyModelAnimate.setAnimationIndex(animationIndex);
 			teclaAvanza = true;
 		}
