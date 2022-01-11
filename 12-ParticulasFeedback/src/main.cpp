@@ -1125,12 +1125,12 @@ bool processInput(bool continueApplication) {
 		boyModelAnimate.setAnimationIndex(animationIndex);
 		teclaAvanza = true;
 	}if (modelSelected == 0 && glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-		modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, 0.4));
+		modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, velocidad));
 		boyModelAnimate.setAnimationIndex(animationIndex);
 		teclaAvanza = true;
 	}
 	else if (modelSelected == 0 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, -0.4));
+		modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, -(velocidad)));
 		boyModelAnimate.setAnimationIndex(animationIndex);
 		teclaAvanza = true;
 	} 
@@ -1179,14 +1179,22 @@ int cuentaCalav(int numero, std::string tipoElemento) {
 
 int cuentaDulces(int numero, std::string tipoElemento) {
 	if (numero < 5) {
-		if (tipoElemento.find("Radish") != std::string::npos)
+		if (tipoElemento.find("Radish") != std::string::npos) {
 			countCandy--;
-		else if (tipoElemento.find("Lolipop") != std::string::npos)
+			velocidad -= 0.002;
+		}
+		else if (tipoElemento.find("Lolipop") != std::string::npos) {
 			countCandy++;
-		else if (tipoElemento.find("ColorBomb") != std::string::npos)
+			velocidad += 0.002;
+		}
+		else if (tipoElemento.find("ColorBomb") != std::string::npos) {
 			countCandy++;
-		else if (tipoElemento.find("BasicCandy") != std::string::npos)
+			velocidad += 0.002;
+		}
+		else if (tipoElemento.find("BasicCandy") != std::string::npos) {
 			countCandy++;
+			velocidad += 0.002;
+		}
 	}
 	return countCandy;
 }
@@ -1950,7 +1958,7 @@ void applicationLoop() {
 		/*******************************************
 		 * Render de colliders
 		 *******************************************/
-		for (std::map<std::string, std::tuple<AbstractModel::OBB, glm::mat4, glm::mat4> >::iterator it =
+		/*for (std::map<std::string, std::tuple<AbstractModel::OBB, glm::mat4, glm::mat4> >::iterator it =
 			collidersOBB.begin(); it != collidersOBB.end(); it++) {
 			glm::mat4 matrixCollider = glm::mat4(1.0);
 			matrixCollider = glm::translate(matrixCollider, std::get<0>(it->second).c);
@@ -1969,7 +1977,7 @@ void applicationLoop() {
 			sphereCollider.setColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
 			sphereCollider.enableWireMode();
 			sphereCollider.render(matrixCollider);
-		}
+		}*/
 
 		// Esto es para ilustrar la transformacion inversa de los coliders
 		/*glm::vec3 cinv = glm::inverse(BoyCollider.u) * glm::vec4(rockCollider.c, 1.0);
