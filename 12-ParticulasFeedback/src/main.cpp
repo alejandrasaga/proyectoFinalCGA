@@ -166,7 +166,7 @@ glm::mat4 modelMatrixBomb = glm::mat4(1.0f);
 glm::mat4 modelMatrixCandy = glm::mat4(1.0f);
 
 int animationIndex = 0;
-int modelSelected = 2;
+int modelSelected = 0;
 bool enableCountSelected = true;
 
 // Variables to animations keyframes
