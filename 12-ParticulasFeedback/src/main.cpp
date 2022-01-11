@@ -1015,6 +1015,48 @@ bool processInput(bool continueApplication) {
 	if (exitApp || glfwWindowShouldClose(window) != 0) {
 		return false;
 	}
+	/*********** CONTROL CONSOLA******************/
+	if (glfwJoystickPresent(GLFW_JOYSTICK_1) == GL_TRUE) {
+		//std::cout << "Esta presente el joystick" << std::endl;
+		int axesCount, buttonCount;
+		const float * axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axesCount);
+		/*std::cout << "Numero de ejesdisponibles:=>" << axesCount << std::endl;
+		std::cout << "Left stick X axis:" << axes[0] << std::endl;
+		std::cout << "Left stick Y axis:" << axes[1] << std::endl;
+		std::cout << "Left Trigger L2:" << axes[4] << std::endl;
+		std::cout << "Right stick X axis:" << axes[2] << std::endl;
+		std::cout << "Right stick Y axis:" << axes[3] << std::endl;
+		std::cout << "Right Trigger L2: " << axes[5] << std::endl;*/
+
+		if (fabs(axes[1] > 0.2)) {
+			modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, axes[1] * 0.1));
+			boyModelAnimate.setAnimationIndex(animationIndex);
+			teclaAvanza = true;
+		}
+
+		if (fabs(axes[0]) > 0.2) {
+			modelMatrixBoy = glm::rotate(modelMatrixBoy, glm::radians(axes[0] * -0.5f), glm::vec3(0, 1, 0));
+			boyModelAnimate.setAnimationIndex(animationIndex);
+			teclaAvanza = true;
+		}
+
+		if (fabs(axes[2]) > 0.2) {
+			camera->mouseMoveCamera(axes[2], 0.0, deltaTime);
+		}
+		if (fabs(axes[3]) > 0.2) {
+			camera->mouseMoveCamera(0.0, axes[3], deltaTime);
+		}
+
+		const unsigned char * buttons = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &buttonCount);
+		/*std::cout << "Numero de botones disponibles :=> " << buttonCount << std::endl;
+		if (buttons[0] == GLFW_PRESS)
+			std::cout << "Se presiona A" << std::endl;*/
+		if (!isJump && buttons[0] == GLFW_PRESS) {
+			isJump = true;
+			startTimeJump = currTime;
+			tmv = 0;
+		}
+	}
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		camera->mouseMoveCamera(offsetX, 0.0, deltaTime);
@@ -1027,12 +1069,10 @@ bool processInput(bool continueApplication) {
 	if (enableCountSelected && glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS) {
 		enableCountSelected = false;
 		modelSelected++;
-		if (modelSelected > 2)
+		if (modelSelected > 1)
 			modelSelected = 0;
 		if (modelSelected == 1)
 			fileName = "../animaciones/animation_dart_joints.txt";
-		if (modelSelected == 2)
-			fileName = "../animaciones/animation_dart.txt";
 		std::cout << "modelSelected:" << modelSelected << std::endl;
 	}
 	else if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_RELEASE)
@@ -1057,21 +1097,21 @@ bool processInput(bool continueApplication) {
 	}if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_RELEASE)
 		availableSave = true;
 
-	if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+	if (modelSelected == 0 && glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
 		modelMatrixBoy = glm::rotate(modelMatrixBoy, glm::radians(2.0f), glm::vec3(0, 1, 0));
 		boyModelAnimate.setAnimationIndex(animationIndex);
 		teclaAvanza = true;
 	}
-	else if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+	else if (modelSelected == 0 && glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
 		modelMatrixBoy = glm::rotate(modelMatrixBoy, glm::radians(-2.0f), glm::vec3(0, 1, 0));
 		boyModelAnimate.setAnimationIndex(animationIndex);
 		teclaAvanza = true;
-	}if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+	}if (modelSelected == 0 && glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
 		modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, 0.4));
 		boyModelAnimate.setAnimationIndex(animationIndex);
 		teclaAvanza = true;
 	}
-	else if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+	else if (modelSelected == 0 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
 		modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, -0.4));
 		boyModelAnimate.setAnimationIndex(animationIndex);
 		teclaAvanza = true;
@@ -1181,8 +1221,9 @@ void applicationLoop() {
 			angleTarget = 0.0;
 		if (axis.y < 0)
 			angleTarget = -angleTarget;
-		if (modelSelected == 1)
+		if (modelSelected == 0)
 			angleTarget -= glm::radians(90.0f);
+
 		camera->setCameraTarget(target);
 		camera->setAngleTarget(angleTarget);
 		camera->updateCamera();
