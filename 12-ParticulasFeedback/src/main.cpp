@@ -28,7 +28,7 @@
 #include "Headers/ThirdPersonCamera.h"
 
 //Font rendering
-//#include "Headers/FontTypeRendering.h"
+#include "Headers/FontTypeRendering.h"
 
 //GLM include
 #define GLM_FORCE_RADIANS
@@ -132,7 +132,7 @@ GLuint textureTerrainBackgroundID, textureTerrainRID, textureTerrainGID, texture
 GLuint textureParticleFountainID, textureParticleFireID, texId;
 GLuint skyboxTextureID;
 
-//FontTypeRendering::FontTypeRendering *modelText;
+FontTypeRendering::FontTypeRendering *modelText;
 
 GLenum types[6] = {
 GL_TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -245,6 +245,7 @@ double currTime, lastTime;
 bool candyCollider = false;
 bool veggieCollider = false;
 bool spookHelp = false;
+bool enterPress = false;
 bool calaveritaAzucarCollider = false;
 std::string elemento;
 int numElemento = -1;
@@ -868,8 +869,8 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	shaderParticlesFire.setMatrix3("EmitterBasis", 1, false, glm::value_ptr(basis));
 
 	//Se inicializa el model de texeles para dibujar texto
-	//modelText = new FontTypeRendering::FontTypeRendering(screenWidth, screenHeight);
-	//modelText->Initialize();
+	modelText = new FontTypeRendering::FontTypeRendering(screenWidth, screenHeight);
+	modelText->Initialize();
 
 	/*******************************************
 	 * Inicializacion de los buffers de la fuente
@@ -1050,18 +1051,21 @@ bool processInput(bool continueApplication) {
 
 	if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
 		modelMatrixBoy = glm::rotate(modelMatrixBoy, glm::radians(5.0f), glm::vec3(0, 1, 0));
-		animationIndex = 1;
+		boyModelAnimate.setAnimationIndex(1);
 	}
 	else if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
 		modelMatrixBoy = glm::rotate(modelMatrixBoy, glm::radians(-5.0f), glm::vec3(0, 1, 0));
-		animationIndex = 1;
+		boyModelAnimate.setAnimationIndex(1);
 	}if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
 		modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, 0.5));
-		animationIndex = 1;
+		boyModelAnimate.setAnimationIndex(1);
 	}
 	else if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
 		modelMatrixBoy = glm::translate(modelMatrixBoy, glm::vec3(0, 0, -0.5));
-		animationIndex = 1;
+		boyModelAnimate.setAnimationIndex(1);
+	} 
+	else if ((modelSelected == 2 && glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)) {
+		enterPress = true;
 	}
 
 	bool keySpaceStatus = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
@@ -1122,6 +1126,8 @@ void applicationLoop() {
 		TimeManager::Instance().CalculateFrameRate(true);
 		deltaTime = TimeManager::Instance().DeltaTime;
 		psi = processInput(true);
+
+		glm::vec3 camera_pos = camera->getPosition();
 
 		std::map<std::string, bool> collisionDetection;
 
@@ -1436,6 +1442,7 @@ void applicationLoop() {
 		modelFountain.setScale(glm::vec3(0.5, 0.5, 0.5));
 		glEnable(GL_CULL_FACE);
 
+
 		/*******************************************
 		 * Custom Anim objects obj
 		 *******************************************/
@@ -1448,8 +1455,8 @@ void applicationLoop() {
 		
 		glm::mat4 modelMatrixBodyBody = glm::mat4(modelMatrixBoy);
 		modelMatrixBodyBody = glm::scale(modelMatrixBodyBody, glm::vec3(0.005, 0.005, 0.005));
-		boyModelAnimate.setAnimationIndex(animationIndex);
 		boyModelAnimate.render(modelMatrixBodyBody);
+		boyModelAnimate.setAnimationIndex(0);
 
 		glm::mat4 modelMatrixBodySpook = glm::mat4(modelMatrixSpook);
 		modelMatrixBodySpook = glm::scale(modelMatrixBodySpook, glm::vec3(0.015, 0.015, 0.015));
@@ -1936,16 +1943,20 @@ void applicationLoop() {
 				}
 			}
 		}
-
 		/*******************************************
 		 * Textos
 		 *******************************************/
-		if (spookHelp == true) {
-			/*glEnable(GL_BLEND);
-			modelText->render("Presione ENTER para ayuda", -0.2, 0.8, 20, 1.0, 1.0, 0.0);
-			modelText->render("Un contador con text rendering", -0.5, -0.9, 30, 0.5, 0.3, 0.6);
-			glDisable(GL_BLEND);*/
+		glm::vec3 distanciaSpook = modelMatrixSpook[3];
+		if (glm::distance(camera_pos, distanciaSpook) < 10.0) {
+			glEnable(GL_BLEND);
+			modelText->render("Hola! Aqui un consejo...", -0.3, 0.8, 30, 0.4, 0.0, 0.8);
+			modelText->render("Tienes que hallar todas las calaveritas, los dulces te ayudaran pero cuidado...",
+				-0.9, -0.85, 20, 1.0, 0.6, 0.2);
+			modelText->render("...no todos son dulces",
+				-0.9, -0.9, 20, 1.0, 0.6, 0.2);
+			glDisable(GL_BLEND);
 		}
+		
 
 		glfwSwapBuffers(window);
 	}
